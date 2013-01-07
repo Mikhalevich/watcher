@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>resources/icons/round_up_arrow_32x32.png</file>
+    </qresource>
+</RCC>

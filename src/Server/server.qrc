@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>resources/icons/comment_32x32.png</file>
+    </qresource>
+</RCC>
