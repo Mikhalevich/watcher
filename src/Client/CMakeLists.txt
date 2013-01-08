@@ -19,7 +19,7 @@ set(RCC_LIST client.qrc)
 
 set(LANGUAGE_LIST Client_en Client_ru)
 foreach (LANGUAGE ${LANGUAGE_LIST})
-    set(TS_LIST ${TS_LIST} "${CMAKE_SOURCE_DIR}/language/${LANGUAGE}.ts")
+    set(TS_LIST ${TS_LIST} "${LANGUAGE_PATH}/${LANGUAGE}.ts")
     #set(QM_LIST ${QM_LIST} "${LANGUAGE}.qm")
 endforeach()
 

@@ -19,7 +19,7 @@ set(RCC_LIST picturewindow.qrc)
 
 set(LANGUAGE_LIST PictureWindow_ru)
 foreach (LANGUAGE ${LANGUAGE_LIST})
-    set(TS_LIST ${TS_LIST} "${CMAKE_SOURCE_DIR}/language/${LANGUAGE}.ts")
+    set(TS_LIST ${TS_LIST} "${LANGUAGE_PATH}/${LANGUAGE}.ts")
     #set(QM_LIST ${QM_LIST} "${LANGUAGE}.qm")
 endforeach()
 
@@ -53,16 +53,5 @@ add_library(${ProjectName} SHARED ${HEADER_LIST} ${SOURCE_LIST}
         ${HEADER_MOC_LIST} ${SOURCE_MOC_LIST} ${HEADER_UI_LIST} ${RCC_SRCS} ${QM_LIST})
 target_link_libraries(${ProjectName} ${QT_LIBRARIES} ${LIBRARY_DEPENDENCIES})
 
-if (WIN32)
-	if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-		set_target_properties(${ProjectName}
-			PROPERTIES
-			RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins_d"
-		)
-	else(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-		set_target_properties(${ProjectName}
-			PROPERTIES
-			RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins"
-		)
-	endif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-endif(WIN32)
+# make path for plugin
+setOutputPluginDirectory(${ProjectName})

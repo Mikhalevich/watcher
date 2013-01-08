@@ -219,7 +219,7 @@
         <translation type="unfinished">ошибка</translation>
     </message>
     <message>
-        <location filename="../../DiplomBuild/Client/ui_mainwindow.h" line="97"/>
+        <location filename="../../../watcherBuild/Client/ui_mainwindow.h" line="97"/>
         <source>MainWindow</source>
         <translation type="unfinished"></translation>
     </message>

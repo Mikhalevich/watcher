@@ -36,16 +36,5 @@ link_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_library(${ProjectName} SHARED ${HEADER_LIST} ${SOURCE_LIST} ${HEADER_MOC_LIST} ${SOURCE_MOC_LIST} ${HEADER_UI_LIST})	
 target_link_libraries(${ProjectName} ${QT_LIBRARIES} ${LIBRARY_DEPENDENCIES})
 
-if (WIN32)
-	if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-		set_target_properties(${ProjectName}
-			PROPERTIES
-			RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins_d"
-		)
-	else(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-		set_target_properties(${ProjectName}
-			PROPERTIES
-			RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins"
-		)
-	endif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-endif(WIN32)
+# make path for plugin
+setOutputPluginDirectory(${ProjectName})

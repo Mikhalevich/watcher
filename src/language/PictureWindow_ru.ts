@@ -5,7 +5,7 @@
     <name>PluginExample</name>
     <message>
         <location filename="../PictureWindow/picturewindow.cpp" line="79"/>
-        <location filename="../../DiplomBuild/PictureWindow/ui_picturewindow.h" line="234"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_picturewindow.h" line="234"/>
         <source>Save picture</source>
         <translation>Сохранить изображение</translation>
     </message>
@@ -16,53 +16,53 @@
         <translation>Окно изображений</translation>
     </message>
     <message>
-        <location filename="../../DiplomBuild/PictureWindow/ui_picturewindow.h" line="231"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_picturewindow.h" line="231"/>
         <source>Form</source>
         <translation>Отправитель</translation>
     </message>
     <message>
-        <location filename="../../DiplomBuild/PictureWindow/ui_picturewindow.h" line="232"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_picturewindow.h" line="232"/>
         <source>Take picture</source>
         <translation>Снять изображение</translation>
     </message>
     <message>
-        <location filename="../../DiplomBuild/PictureWindow/ui_picturewindow.h" line="233"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_picturewindow.h" line="233"/>
         <source>Clear pictures</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../../DiplomBuild/PictureWindow/ui_picturewindow.h" line="235"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_picturewindow.h" line="235"/>
         <source>1:1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../DiplomBuild/PictureWindow/ui_picturewindow.h" line="236"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_picturewindow.h" line="236"/>
         <source>width</source>
         <translation>по ширине</translation>
     </message>
     <message>
-        <location filename="../../DiplomBuild/PictureWindow/ui_picturewindow.h" line="237"/>
-        <location filename="../../DiplomBuild/PictureWindow/ui_picturewindow.h" line="241"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_picturewindow.h" line="237"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_picturewindow.h" line="241"/>
         <source>History</source>
         <translation>История изображений</translation>
     </message>
     <message>
-        <location filename="../../DiplomBuild/PictureWindow/ui_picturewindow.h" line="238"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_picturewindow.h" line="238"/>
         <source>All pictures</source>
         <translation>Все изображения</translation>
     </message>
     <message>
-        <location filename="../../DiplomBuild/PictureWindow/ui_picturewindow.h" line="239"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_picturewindow.h" line="239"/>
         <source>Current date</source>
         <translation>Текущая дата</translation>
     </message>
     <message>
-        <location filename="../../DiplomBuild/PictureWindow/ui_picturewindow.h" line="240"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_picturewindow.h" line="240"/>
         <source>Period</source>
         <translation>Период</translation>
     </message>
     <message>
-        <location filename="../../DiplomBuild/PictureWindow/ui_picturewindow.h" line="242"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_picturewindow.h" line="242"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
@@ -110,52 +110,52 @@
         <translation>Ошибка ввода</translation>
     </message>
     <message>
-        <location filename="../../DiplomBuild/PictureWindow/ui_propertydialog.h" line="200"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_propertydialog.h" line="200"/>
         <source>Dialog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../DiplomBuild/PictureWindow/ui_propertydialog.h" line="201"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_propertydialog.h" line="201"/>
         <source>Pictures interval (seconds)</source>
         <translation>Интервал изображений (секунды)</translation>
     </message>
     <message>
-        <location filename="../../DiplomBuild/PictureWindow/ui_propertydialog.h" line="203"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_propertydialog.h" line="203"/>
         <source>mail settings</source>
         <translation>настройки почты</translation>
     </message>
     <message>
-        <location filename="../../DiplomBuild/PictureWindow/ui_propertydialog.h" line="204"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_propertydialog.h" line="204"/>
         <source>Server</source>
         <translation>Сервер</translation>
     </message>
     <message>
-        <location filename="../../DiplomBuild/PictureWindow/ui_propertydialog.h" line="205"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_propertydialog.h" line="205"/>
         <source>Port</source>
         <translation>Порт</translation>
     </message>
     <message>
-        <location filename="../../DiplomBuild/PictureWindow/ui_propertydialog.h" line="207"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_propertydialog.h" line="207"/>
         <source>User</source>
         <translation>Пользователь</translation>
     </message>
     <message>
-        <location filename="../../DiplomBuild/PictureWindow/ui_propertydialog.h" line="208"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_propertydialog.h" line="208"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../../DiplomBuild/PictureWindow/ui_propertydialog.h" line="210"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_propertydialog.h" line="210"/>
         <source>Send from</source>
         <translation>Отправить от</translation>
     </message>
     <message>
-        <location filename="../../DiplomBuild/PictureWindow/ui_propertydialog.h" line="211"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_propertydialog.h" line="211"/>
         <source>Send to</source>
         <translation>Получатели</translation>
     </message>
     <message>
-        <location filename="../../DiplomBuild/PictureWindow/ui_propertydialog.h" line="212"/>
+        <location filename="../../../watcherBuild/PictureWindow/ui_propertydialog.h" line="212"/>
         <source>mail interval (minutes)</source>
         <translation>Интервал отправки почты (минуты)</translation>
     </message>
