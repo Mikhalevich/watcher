@@ -28,7 +28,7 @@ function(setOutputPluginDirectory PROJECT_NAME)
 				PROPERTIES
 				RUNTIME_OUTPUT_DIRECTORY ${PLUGIN_OUTPUT}
 			)
-	elseif(WIN32)
+        else(WIN32)
 		set_target_properties(${PROJECT_NAME}
 				PROPERTIES
 				LIBRARY_OUTPUT_DIRECTORY ${PLUGIN_OUTPUT}
