@@ -2,12 +2,16 @@
 set(ProjectName Client)
 project(${ProjectName})
 
-set(HEADER_LIST )
+set(HEADER_LIST databasemanager.h
+	databasetypes.h
+	)
 	
 set(SOURCE_LIST main.cpp 
     mainwindow.cpp 
     connectdialog.cpp 
-    aurorizationdialog.cpp)
+    aurorizationdialog.cpp
+	databasemanager.cpp
+	)
 
 set(HEADER_MOC_LIST mainwindow.h 
     connectdialog.h 
@@ -27,7 +31,8 @@ find_package(Qt4 REQUIRED
 	QtCore 
 	QtGui 
 	QtNetwork
-	QtTest)
+	QtTest
+	QtSql)
 include(${QT_USE_FILE})
 
 # removes console from build	
