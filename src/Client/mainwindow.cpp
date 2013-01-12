@@ -16,11 +16,13 @@
 #include <QToolBar>
 #include <QEvent>
 #include <QKeyEvent>
+#include <QTimer>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "connectdialog.h"
 #include "aurorizationdialog.h"
+#include "databasemanager.h"
 
 namespace clientCommon
 {
@@ -65,6 +67,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(onTabWidgetCurrentChanged(int)));
 
     retranslateUI();
+
+    // restore settings (create db if needed)
+    QTimer::singleShot(0, this, SLOT(readSettings()));
 }
 
 MainWindow::~MainWindow()
@@ -427,51 +432,86 @@ void MainWindow::retranslateUI()
     }
 }
 
-void MainWindow::addConnection()
+void MainWindow::addConnection(const database::Connection& connection /* = database::Connection() */)
 {
-    ConnectDialog dialog(host_, port_);
-    if (dialog.exec() == QDialog::Accepted)
+    // read or manual
+    bool isReadSettings = !connection.host_.isEmpty();
+
+    // if manual
+    if (!isReadSettings)
     {
+        ConnectDialog dialog(host_, port_);
+
+        if (dialog.exec() != QDialog::Accepted)
+        {
+            return; // bad
+        }
+
         host_ = dialog.host();
         port_ = dialog.port();
-
-        static int position;
-        clientsocket::ClientTcpSocket *clientSocket = new clientsocket::ClientTcpSocket(this);
-        clientSocket->setNumber(++position);
-
-        // connections
-        //connect(&tcpSocket_, SIGNAL(disconnected()), this, SLOT(disconnect()));
-        //connect(&tcpSocket_, SIGNAL(error(QAbstractSocket::SocketError)),
-          //      this, SLOT(error(QAbstractSocket::SocketError)));
-        //connect(&tcpSocket_, SIGNAL(readyRead()), this, SLOT(readData()));
-        connect(clientSocket, SIGNAL(connected()), this, SLOT(login()));
-        connect(clientSocket, SIGNAL(stateChanged(QAbstractSocket::SocketState)),
-                this, SLOT(socketStateChanged(QAbstractSocket::SocketState)));
-        connect(clientSocket, SIGNAL(sendAutorization(bool, const QString&)), this, SLOT(checkAutorization(bool, const QString&)));
-
-        // some chckes
-        std::map<int, clientsocket::ClientTcpSocket*>::iterator it = clientSockets_.find(position);
-        Q_ASSERT(it == clientSockets_.end());
-        clientSockets_.insert(std::make_pair(position, clientSocket));
-
-        if (clientSocket->state() != QAbstractSocket::UnconnectedState)
-        {
-            // wait while disconnect without timeout
-            clientSocket->disconnectFromHost();
-            clientSocket->waitForDisconnected(-1);
-        }
-        clientSocket->connectToHost(host_, port_);
-
-        QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidget);
-        ui->treeWidget->setCurrentItem(item);
-        QString connectionName = host_ + QLatin1Char(':') + QString::number(port_);
-        item->setText(0, connectionName);
-
-        // set item position index
-        item->setData(0, Qt::UserRole, position);
-        item->setData(0, Qt::UserRole + 1, host_);
-        item->setData(0, Qt::UserRole + 2, port_);
     }
+
+    static int position;
+    clientsocket::ClientTcpSocket *clientSocket = new clientsocket::ClientTcpSocket(this);
+    clientSocket->setNumber(++position);
+
+    // connections
+    //connect(&tcpSocket_, SIGNAL(disconnected()), this, SLOT(disconnect()));
+    //connect(&tcpSocket_, SIGNAL(error(QAbstractSocket::SocketError)),
+        //      this, SLOT(error(QAbstractSocket::SocketError)));
+    //connect(&tcpSocket_, SIGNAL(readyRead()), this, SLOT(readData()));
+    connect(clientSocket, SIGNAL(connected()), this, SLOT(login()));
+    connect(clientSocket, SIGNAL(stateChanged(QAbstractSocket::SocketState)),
+            this, SLOT(socketStateChanged(QAbstractSocket::SocketState)));
+    connect(clientSocket, SIGNAL(sendAutorization(bool, const QString&)), this, SLOT(checkAutorization(bool, const QString&)));
+
+    // save socket
+    std::map<int, clientsocket::ClientTcpSocket*>::iterator it = clientSockets_.find(position);
+    Q_ASSERT(it == clientSockets_.end());
+    clientSockets_.insert(std::make_pair(position, clientSocket));
+
+    if (isReadSettings)
+    {
+        // save read settings (it need in login function)
+        std::map<int, database::Connection>::iterator it = readSettingsSockets_.find(position);
+        Q_ASSERT(it == readSettingsSockets_.end());
+        readSettingsSockets_.insert(std::make_pair(position, connection));
+
+        // save socket settings
+        it = socketSettings_.find(position);
+        Q_ASSERT(it == socketSettings_.end());
+        socketSettings_.insert(std::make_pair(position, connection));
+    }
+    else
+    {
+        database::Connection conn;
+        conn.host_ = host_;
+        conn.port_ = port_;
+        // userName_ and userPwd_ will be filled in login function
+
+        // save socket settings
+        std::map<int, database::Connection>::iterator it = socketSettings_.find(position);
+        Q_ASSERT(it == socketSettings_.end());
+        socketSettings_.insert(std::make_pair(position, conn));
+    }
+
+    if (clientSocket->state() != QAbstractSocket::UnconnectedState)
+    {
+        // wait while disconnect without timeout
+        clientSocket->disconnectFromHost();
+        clientSocket->waitForDisconnected(-1);
+    }
+    clientSocket->connectToHost(host_, port_);
+
+    QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidget);
+    ui->treeWidget->setCurrentItem(item);
+    QString connectionName = host_ + QLatin1Char(':') + QString::number(port_);
+    item->setText(0, connectionName);
+
+    // set item position index
+    item->setData(0, Qt::UserRole, position);
+    item->setData(0, Qt::UserRole + 1, host_);
+    item->setData(0, Qt::UserRole + 2, port_);
 }
 
 void MainWindow::removeConnection()
@@ -690,15 +730,47 @@ void MainWindow::login()
     clientsocket::ClientTcpSocket *socket = qobject_cast<clientsocket::ClientTcpSocket*>(object);
     if (socket)
     {
-        AurorizationDialog dlg;
-        if (dlg.exec() == QDialog::Accepted)
+        QString user;
+        QByteArray password;
+
+        // check is this read from settings login
+        int position = socket->number();
+        std::map<int, database::Connection>::const_iterator it = readSettingsSockets_.find(position);
+        if (it != readSettingsSockets_.end())
         {
-            socket->login(dlg.userName(), dlg.password());
+            // read
+            user = it->second.userName_;
+            password = it->second.userPwd_;
         }
         else
         {
-            socket->disconnectFromHost();
+            // manual
+            AurorizationDialog dlg;
+            if (dlg.exec() == QDialog::Accepted)
+            {
+                user = dlg.userName();
+                password = dlg.password();
+
+                // fill userName_ and userPwd_
+                std::map<int, database::Connection>::iterator it = socketSettings_.find(position);
+                if (it != socketSettings_.end())
+                {
+                    it->second.userName_ = user;
+                    it->second.userPwd_ = password;
+                }
+                else
+                {
+                    Q_ASSERT("WTF????" && false);
+                }
+            }
+            else
+            {
+                socket->disconnectFromHost();
+            }
         }
+
+        // try to login
+        socket->login(user, password);
     }
 }
 
@@ -753,4 +825,43 @@ void MainWindow::onTabWidgetCurrentChanged(int index)
             }
         }
     }
+}
+
+void MainWindow::readSettings()
+{
+    database::Connections connectionsList;
+    database::DatabaseManager::instance()->connections(connectionsList);
+
+    for (database::Connections::const_iterator it = connectionsList.begin(), end = connectionsList.end(); it != end; ++it)
+    {
+        addConnection(*it);
+    }
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    database::Connections connectionList;
+
+    QTreeWidgetItemIterator it(ui->treeWidget);
+    while (*it)
+    {
+        int position = (*it)->data(0, Qt::UserRole).toInt();
+        
+        std::map<int, database::Connection>::const_iterator sockIt = socketSettings_.find(position);
+        if (sockIt != socketSettings_.end())
+        {
+            connectionList.push_back(sockIt->second);
+        }
+        else
+        {
+            Q_ASSERT("WTF???" && false);
+        }
+
+        ++it;
+    }
+
+    // save connection settings
+    database::DatabaseManager::instance()->setConnections(connectionList);
+
+    event->accept();
 }

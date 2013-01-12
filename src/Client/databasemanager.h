@@ -5,6 +5,8 @@
 
 #include "databasetypes.h"
 
+class QSqlQuery;
+
 namespace database
 {
     // d pointer

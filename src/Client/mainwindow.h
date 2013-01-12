@@ -12,6 +12,7 @@
 
 #include "basewidget.h"
 #include "clienttcpsocket.h"
+#include "databasetypes.h"
 
 class QAction;
 class QVariant;
@@ -35,9 +36,11 @@ public:
 
 protected:
     virtual bool eventFilter(QObject *object, QEvent *event);
+    virtual void closeEvent(QCloseEvent *event);
 
 private slots:
-    void addConnection();
+    // add connection - manual or from settings
+    void addConnection(const database::Connection& connection = database::Connection());
     void removeConnection();
     void fullView();
     void onPluginAction(QAction* action);
@@ -55,6 +58,7 @@ private slots:
 
     void changeLanguage(QAction *action);
     void changeStylesheet(QAction *action);
+    void readSettings();
 
     void socketStateChanged(QAbstractSocket::SocketState state);
 
@@ -73,6 +77,8 @@ private:
     Ui::MainWindow *ui;
 
     std::map<int, clientsocket::ClientTcpSocket*> clientSockets_;
+    std::map<int, database::Connection> socketSettings_;
+    std::map<int, database::Connection> readSettingsSockets_;
     std::vector<BaseWidget*> plugins_;
     std::pair<int, QWidget*> fullViewPair_;
 

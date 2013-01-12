@@ -7,6 +7,7 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QVariant>
+#include <QDebug>
 
 #include "databasemanager.h"
 
@@ -63,12 +64,13 @@ namespace database
         // creating connections table
         if (!q.exec(QLatin1String("CREATE TABLE IF NOT EXISTS Connections("
             "id INTEGER PRIMARY KEY, "
-            "host VARCHAR(255) NOT NULL"
-            "port INTEGER DEFAULT NOT NULL"
-            "user_name VARCHAR(255) NOT NULL, "
-            "user_pwd BLOB NOT NULL"
+            "host VARCHAR(255) NOT NULL, "
+            "port INTEGER NOT NULL, "
+            "user_name VARCHAR(255), "
+            "user_pwd BLOB"
             "); ")))
         {
+            qDebug() << q.lastError().text();
             throw std::runtime_error(q.lastError().text().toStdString());
         }
     }
@@ -80,6 +82,7 @@ namespace database
             // simple querry
             if (!sqlQuery.exec(queryString))
             {
+                qDebug() << sqlQuery.lastError().text();
                 throw std::runtime_error(sqlQuery.lastError().text().toStdString());
             }
         }
@@ -94,6 +97,7 @@ namespace database
 
             if (!sqlQuery.exec())
             {
+                qDebug() << sqlQuery.lastError().text();
                 throw std::runtime_error(sqlQuery.lastError().text().toStdString());
             }
         }
@@ -103,9 +107,8 @@ namespace database
     {
         QSqlQuery q;
 
-        runQuery(q, QLatin1String("SELECT * FROM Connections;"));
+        runQuery(q, QLatin1String("SELECT host, port, user_name, user_pwd FROM Connections;"));
 
-        Connections connectoinList;
         while (q.next())
         {
             Connection conn;
@@ -114,7 +117,7 @@ namespace database
             conn.userName_ = q.value(2).toString();
             conn.userPwd_ = q.value(3).toByteArray();
 
-            connectoinList.push_back(conn);
+            connectionList.push_back(conn);
         }
     }
 
@@ -133,8 +136,8 @@ namespace database
             Placeholders placeholders;
             placeholders.insert(QLatin1String(":host"), it->host_);
             placeholders.insert(QLatin1String(":port"), it->port_);
-            placeholders.insert(QLatin1String("user_name"), it->userName_);
-            placeholders.insert(QLatin1String("user_pwd"), it->userPwd_);
+            placeholders.insert(QLatin1String(":user_name"), it->userName_);
+            placeholders.insert(QLatin1String(":user_pwd"), it->userPwd_);
 
             runQuery(q, QLatin1String("INSERT INTO Connections(host, port, user_name, user_pwd) VALUES(:host, :port, :user_name, :user_pwd)"), 
                 placeholders);
