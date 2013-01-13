@@ -741,6 +741,9 @@ void MainWindow::login()
             // read
             user = it->second.userName_;
             password = it->second.userPwd_;
+
+            // remove conneciton from read list
+            readSettingsSockets_.erase(position);
         }
         else
         {
