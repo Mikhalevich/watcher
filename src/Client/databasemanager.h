@@ -26,8 +26,13 @@ namespace database
 
         void runQuery(QSqlQuery& sqlQuery, const QString& queryString, const Placeholders& placeholders = Placeholders());
 
+        // connections
         void connections(/* out */ Connections& connectionList);
         void setConnections(const Connections& connectionList);
+
+        // plugins
+        void plugins(/* out */ Plugins& pluginList);
+        void setPlugins(const Plugins& pluginsList);
 
     private:
         DatabaseManager();

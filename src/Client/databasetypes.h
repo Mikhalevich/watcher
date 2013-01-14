@@ -14,6 +14,14 @@ namespace database
     };
 
     typedef QList<Connection> Connections;
+
+    struct Plugin
+    {
+        Connection connection_;
+        QString pluginName_;
+    };
+
+    typedef QList<Plugin> Plugins;
 }
 
 #endif // DATABASETYPES_H

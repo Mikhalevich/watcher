@@ -832,6 +832,7 @@ void MainWindow::onTabWidgetCurrentChanged(int index)
 
 void MainWindow::readSettings()
 {
+    // connections
     database::Connections connectionsList;
     database::DatabaseManager::instance()->connections(connectionsList);
 
@@ -839,10 +840,52 @@ void MainWindow::readSettings()
     {
         addConnection(*it);
     }
+
+    // plugins
+    database::Plugins pluginList;
+    database::DatabaseManager::instance()->plugins(pluginList);
+
+    for (database::Plugins::const_iterator pluginIt = pluginList.begin(), pluginItEnd = pluginList.end(); 
+        pluginIt != pluginItEnd; ++pluginIt)
+    {
+        // find plugin
+        for (int i = 0, end = plugins_.size(); i < end; ++i)
+        {
+            if (plugins_.at(i)->text() == pluginIt->pluginName_)
+            {
+                // find connection
+                clientsocket::ClientTcpSocket *socket = NULL;
+                for (std::map<int, database::Connection>::iterator connIt = socketSettings_.begin(), connItEnd = socketSettings_.end(); 
+                    connIt != connItEnd; ++connIt)
+                {
+                    if ((connIt->second.host_ == pluginIt->connection_.host_) && 
+                        (connIt->second.port_ == pluginIt->connection_.port_))
+                    {
+                        std::map<int, clientsocket::ClientTcpSocket*>::iterator sockIt = clientSockets_.find(connIt->first);
+                        Q_ASSERT(sockIt != clientSockets_.end());
+                        socket = sockIt->second;
+
+                        break;
+                    }
+                }
+
+                // if found connection
+                if (socket)
+                {
+                    BaseWidget *widget = plugins_.at(i)->clone();
+                    widget->setClientSocket(socket);
+                    ui->tabWidget->addTab(widget, widget->text());
+
+                    break;
+                }
+            }
+        }
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    // connections
     database::Connections connectionList;
 
     QTreeWidgetItemIterator it(ui->treeWidget);
@@ -865,6 +908,33 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
     // save connection settings
     database::DatabaseManager::instance()->setConnections(connectionList);
+
+    // plugins
+    database::Plugins pluginList;
+
+    for (int i = 0, end = ui->tabWidget->count(); i < end; ++i)
+    {
+        BaseWidget *widget = qobject_cast<BaseWidget*>(ui->tabWidget->widget(i));
+        clientsocket::ClientTcpSocket& socket = static_cast<clientsocket::ClientTcpSocket&>(widget->getClientSocket());
+        int position = socket.number();
+
+        std::map<int, database::Connection>::const_iterator sockIt = socketSettings_.find(position);
+        if (sockIt != socketSettings_.end())
+        {
+            database::Plugin plugin;
+            plugin.connection_ = sockIt->second;
+            plugin.pluginName_ = widget->text(); // think about locale!!!!!
+
+            pluginList.push_back(plugin);
+        }
+        else
+        {
+            Q_ASSERT("WTF???" && false);
+        }
+    }
+
+    // save plugin settings
+    database::DatabaseManager::instance()->setPlugins(pluginList);
 
     event->accept();
 }

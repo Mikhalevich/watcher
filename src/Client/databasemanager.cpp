@@ -73,6 +73,18 @@ namespace database
             qDebug() << q.lastError().text();
             throw std::runtime_error(q.lastError().text().toStdString());
         }
+
+        // creating plugins table
+        if (!q.exec(QLatin1String("CREATE TABLE IF NOT EXISTS Plugins("
+            "id INTEGER PRIMARY KEY, "
+            "connection_id INTEGER NOT NULL, "
+            "plugin_name VARCHAR(255) NOT NULL, "
+            "CONSTRAINT PluginsFK FOREIGN KEY (connection_id) REFERENCES Connections(id) ON DELETE CASCADE ON UPDATE CASCADE "
+            "); ")))
+        {
+            qDebug() << q.lastError().text();
+            throw std::runtime_error(q.lastError().text().toStdString());
+        }
     }
 
     void DatabaseManager::runQuery(QSqlQuery& sqlQuery, const QString& queryString, const Placeholders& placeholders /* = Placeholders */)
@@ -141,6 +153,70 @@ namespace database
 
             runQuery(q, QLatin1String("INSERT INTO Connections(host, port, user_name, user_pwd) VALUES(:host, :port, :user_name, :user_pwd)"), 
                 placeholders);
+        }
+
+        runQuery(q, QLatin1String("COMMIT TRANSACTION"));
+    }
+
+    void DatabaseManager::plugins(Plugins& pluginList)
+    {
+        QSqlQuery q;
+
+        runQuery(q, QLatin1String("SELECT host, port, user_name, user_pwd, plugin_name FROM Plugins INNER JOIN Connections ON Plugins.connection_id = Connections.id;"));
+
+        while (q.next())
+        {
+            Connection conn;
+            conn.host_ = q.value(0).toString();
+            conn.port_ = q.value(1).toInt();
+            conn.userName_ = q.value(2).toString();
+            conn.userPwd_ = q.value(3).toByteArray();
+
+            Plugin plugin;
+            plugin.connection_ = conn;
+            plugin.pluginName_ = q.value(4).toString();
+
+            pluginList.push_back(plugin);
+        }
+    }
+
+    void DatabaseManager::setPlugins(const Plugins& pluginsList)
+    {
+        QSqlQuery q;
+
+        runQuery(q, QLatin1String("BEGIN TRANSACTION"));
+
+        // remove previous connections
+        runQuery(q, QLatin1String("DELETE FROM Plugins;"));
+
+        // insert new connections
+        for (Plugins::const_iterator it = pluginsList.begin(), end = pluginsList.end(); it != end; ++it)
+        {
+            Placeholders placeholders;
+            placeholders.insert(QLatin1String(":host"), it->connection_.host_);
+            placeholders.insert(QLatin1String(":port"), it->connection_.port_);
+            runQuery(q, QLatin1String("SELECT id FROM Connections WHERE host = :host AND port = :port"),
+                placeholders);
+
+            int connection_id = -1;
+
+            if (q.first())
+            {
+                connection_id = q.value(0).toInt();
+            }
+
+            if (connection_id != -1)
+            {
+                placeholders.clear();
+                placeholders.insert(QLatin1String(":connection_id"), connection_id);
+                placeholders.insert(QLatin1String(":plugin_name"), it->pluginName_);
+                runQuery(q, QLatin1String("INSERT INTO Plugins(connection_id, plugin_name) VALUES(:connection_id, :plugin_name);"), 
+                    placeholders);
+            }
+            else
+            {
+                Q_ASSERT("maybe insert new connection?" && false);
+            }
         }
 
         runQuery(q, QLatin1String("COMMIT TRANSACTION"));
