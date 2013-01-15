@@ -679,15 +679,21 @@ void MainWindow::onTreeWidgetContexMenuRequested(const QPoint &point)
     QPoint globalPoint = ui->treeWidget->mapToGlobal(point);
     QTreeWidgetItem *item = ui->treeWidget->itemAt(point);
 
+    QMenu contextMenu;
+
     if (item)
     {
         ui->treeWidget->setCurrentItem(item);
-        QMenu contextMenu;
         contextMenu.addAction(connectAction_);
         contextMenu.addAction(disconnectAction_);
-
-        contextMenu.exec(globalPoint);
+        contextMenu.addAction(removeConnectionAction_);
     }
+    else
+    {
+        contextMenu.addAction(addConnectionAction_);
+    }
+
+    contextMenu.exec(globalPoint);
 }
 
 void MainWindow::connectToHost()
@@ -788,7 +794,7 @@ void MainWindow::checkAutorization(bool success, const QString &error)
 
 void MainWindow::onTreeWidgetCurrentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
-    // relese bold previous item
+    // release bold previous item
     if (previous)
     {
         QFont font = previous->font(0);
