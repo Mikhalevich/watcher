@@ -26,6 +26,7 @@ namespace network
     private slots:
         void readData();
         void writeData(const QByteArray& data);
+        void setAutorization(bool state);
 
     private:
         void fillFactory();
@@ -38,8 +39,8 @@ namespace network
         global::types::operation_t operation_;
         // operation data size which read from socket
         global::types::operation_size_t size_;
-        // first time execution flag
-        bool firstTime_;
+        // autorization flag
+        bool autorization_;
 
         ObjectFactory<Operation, networkquery::INetworkQuery> queryFactory_;
     };

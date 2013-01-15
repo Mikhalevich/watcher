@@ -769,6 +769,7 @@ void MainWindow::login()
             else
             {
                 socket->disconnectFromHost();
+                return; // bad
             }
         }
 

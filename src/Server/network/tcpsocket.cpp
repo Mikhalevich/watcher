@@ -26,7 +26,7 @@ namespace network
         : QTcpSocket(parent)
         , operation_(NOOPERATION)
         , size_(0)
-        , firstTime_(true)
+        , autorization_(false)
 
     {
         connect(this, SIGNAL(readyRead()), this, SLOT(readData()));
@@ -84,7 +84,7 @@ namespace network
 
             QSharedPointer<networkquery::INetworkQuery> query;
 
-            if (firstTime_)
+            if (!autorization_)
             {
                 if (operation_ != AUTORIZATION)
                 {
@@ -102,7 +102,7 @@ namespace network
                 }
 
                 query = QSharedPointer<networkquery::INetworkQuery>(new networkquery::AutorizationQuery());
-                firstTime_ = false;
+                connect(query.data(), SIGNAL(notifyAutorization(bool)), this, SLOT(setAutorization(bool)), Qt::QueuedConnection);
             }
             else
             {
@@ -138,5 +138,10 @@ namespace network
     void TcpSocket::writeData(const QByteArray &data)
     {
         write(data.data(), data.size());
+    }
+
+    void TcpSocket::setAutorization(bool state)
+    {
+        autorization_ = state;
     }
 } // network

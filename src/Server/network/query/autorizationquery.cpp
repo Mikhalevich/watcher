@@ -26,8 +26,8 @@ namespace network
             query.execute();
 
             // autorization
-                qint8 autorization = 0;
-                QByteArray dataToWrite;
+            qint8 autorization = 0;
+            QByteArray dataToWrite;
 
             if (query.error().isEmpty())
             {
@@ -40,6 +40,9 @@ namespace network
 
                 global::functions::writeDataToByteArray(dataToWrite, AUTORIZATION, autorization, error);
             }
+
+            // notify tcpsocket about autorization
+            emit notifyAutorization(autorization == 0);
 
             // emit signal to write data to socket
             emit writeData(dataToWrite);
