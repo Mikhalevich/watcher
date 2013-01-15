@@ -143,7 +143,7 @@ void MainWindow::onPluginAction(QAction *action)
     clientsocket::ClientTcpSocket *socket = getCurrentConnection();
     if (socket)
     {
-        widget->setClientSocket(getCurrentConnection());
+        widget->setClientSocket(socket);
         ui->tabWidget->addTab(widget, widget->text());
     }
 }
@@ -522,7 +522,28 @@ void MainWindow::removeConnection()
         if (QMessageBox::warning(this, QString::null, tr("Delete connection?"),
                 QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
         {
+            // socket position
             const int position = item->data(0, Qt::UserRole).toInt();
+
+            // remove all plugins contains this socket
+            typedef std::vector<QWidget*> RemoveList;
+            RemoveList removeList;
+            for (int i = 0, end = ui->tabWidget->count(); i < end; ++i)
+            {
+                BaseWidget *widget = qobject_cast<BaseWidget*>(ui->tabWidget->widget(i));
+                const clientsocket::ClientTcpSocket& socket = static_cast<const clientsocket::ClientTcpSocket&>(widget->getClientSocket());
+                if (position == socket.number())
+                {
+                    removeList.push_back(widget);
+                }
+            }
+
+            for (RemoveList::const_iterator it = removeList.begin(), endIt = removeList.end(); it != endIt; ++it)
+            {
+                delete *it;
+            }
+
+            // remove socket
             std::map<int, clientsocket::ClientTcpSocket*>::iterator it = clientSockets_.find(position);
             Q_ASSERT(it != clientSockets_.end());
             clientsocket::ClientTcpSocket *socket = it->second;
@@ -748,7 +769,7 @@ void MainWindow::login()
             user = it->second.userName_;
             password = it->second.userPwd_;
 
-            // remove conneciton from read list
+            // remove connection from read list
             readSettingsSockets_.erase(position);
         }
         else
