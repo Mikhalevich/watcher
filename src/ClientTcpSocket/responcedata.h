@@ -230,6 +230,44 @@ namespace clientsocket
         private:
             QString error_;
         };
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+
+        class SettingsData : public AbstractData
+        {
+        public:
+            SettingsData(const qint32 port, const qint8 startupMode, qint8 trayIcon)
+                : port_(port)
+                , startupMode_(startupMode)
+                , trayIcon_(trayIcon)
+            {
+            }
+
+            virtual Operation type() const
+            {
+                return GETSETTINGS;
+            }
+
+            const qint32 port() const
+            {
+                return port_;
+            }
+
+            const qint8 startupMode() const
+            {
+                return startupMode_;
+            }
+
+            const qint8 trayIcon() const
+            {
+                return trayIcon_;
+            }
+
+        private:
+            qint32 port_;
+            qint8 startupMode_;
+            qint8 trayIcon_;
+        };
     } // responcedata
 } // clientsocket
 

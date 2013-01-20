@@ -20,6 +20,7 @@ set(HEADER_QUERY_LIST
     querry/getmailpropertiesquerry.h 
     querry/executionreportquerry.h 
     querry/getpicturepropertiesquerry.h 
+	querry/settingsquery.h
 	)
 	
 set(HEADER_MOC_LIST 
@@ -40,6 +41,7 @@ set(SOURCE_QUERY_LIST
     querry/getmailpropertiesquerry.cpp 
     querry/executionreportquerry.cpp 
     querry/getpicturepropertiesquerry.cpp
+	querry/settingsquery.cpp
 	)
 
 find_package(Qt4 REQUIRED QtCore QtGui QtNetwork)

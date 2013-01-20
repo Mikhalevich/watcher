@@ -44,7 +44,11 @@ namespace global
             GETMAILPROPERTIES,
 
             // executin process
-            EXECUTIONREPORT
+            EXECUTIONREPORT,
+
+            // settings
+            GETSETTINGS,
+            SETSETTINGS
         };
 
         enum ControlType {
@@ -85,6 +89,20 @@ namespace global
             QDataStream out(&outputArray, QIODevice::WriteOnly);
             // write data with zero size
             out << (types::operation_t)operation << (types::operation_size_t)0 << t1 << t2;
+            // counting size
+            types::operation_size_t size = outputArray.size() - sizeof(types::operation_t) - sizeof(types::operation_size_t);
+            // write size
+            out.device()->seek(sizeof(types::operation_t));
+            out << size;
+        }
+
+        // with 3 parameters
+        template <typename T1, typename T2, typename T3>
+        void writeDataToByteArray(QByteArray& outputArray, params::Operation operation, const T1& t1, const T2& t2, const T3& t3)
+        {
+            QDataStream out(&outputArray, QIODevice::WriteOnly);
+            // write data with zero size
+            out << (types::operation_t)operation << (types::operation_size_t)0 << t1 << t2 << t3;
             // counting size
             types::operation_size_t size = outputArray.size() - sizeof(types::operation_t) - sizeof(types::operation_size_t);
             // write size

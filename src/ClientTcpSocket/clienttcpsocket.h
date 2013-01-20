@@ -69,6 +69,10 @@ namespace clientsocket
         // autorization
         void login(const QString& user, const QByteArray& password);
 
+        // settings
+        void getSettings();
+        void setSettings(qint32 port, qint8 startupMode, qint8 trayIcon);
+
     signals:
         void sendData(const responcedata::AbstractData& data);
         void sendAutorization(bool success, const QString& error = QString());

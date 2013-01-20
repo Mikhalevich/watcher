@@ -12,6 +12,7 @@
 #include "querry/getmailpropertiesquerry.h"
 #include "querry/executionreportquerry.h"
 #include "querry/getpicturepropertiesquerry.h"
+#include "querry/settingsquery.h"
 
 namespace clientsocket
 {
@@ -58,6 +59,7 @@ namespace clientsocket
         querryFactory_.add<networkquery::GetMailPropertiesQuerry>(GETMAILPROPERTIES);
         querryFactory_.add<networkquery::ExecutionReportQuerry>(EXECUTIONREPORT);
         querryFactory_.add<networkquery::GetPicturePropertiesQuerry>(GETPICTURETIMER);
+        querryFactory_.add<networkquery::GetSettingsQuery>(GETSETTINGS);
     }
 
     bool ClientTcpSocket::isConnected()
@@ -261,6 +263,32 @@ namespace clientsocket
 
         QDataStream out(this);
         out << operation_ << size_;
+    }
+
+    void ClientTcpSocket::getSettings()
+    {
+        operation_ = GETSETTINGS;
+        size_ = 0;
+
+        QDataStream out(this);
+        out << operation_ << size_;
+    }
+
+    void ClientTcpSocket::setSettings(qint32 port, qint8 startupMode, qint8 trayIcon)
+    {
+        operation_ = SETSETTINGS;
+
+        // determinate size
+        QByteArray bytes;
+        QDataStream sizeBuf(&bytes, QIODevice::WriteOnly);
+        sizeBuf << (qint32)port << qint8(startupMode) << qint8(trayIcon);
+
+        size_ = bytes.size();
+
+        // send to server
+        QDataStream out(this);
+        out << operation_ << size_
+            << (qint32)port << qint8(startupMode) << qint8(trayIcon);
     }
 
     void ClientTcpSocket::readData()

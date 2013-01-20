@@ -42,6 +42,10 @@ namespace clientsocket
 
         // autorization
         virtual void login(const QString& user, const QByteArray& password) = 0;
+
+        // settings
+        virtual void getSettings() = 0;
+        virtual void setSettings(qint32 port, qint8 sturtupMode, qint8 trayIcon) = 0;
     };
 }
 

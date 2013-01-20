@@ -25,6 +25,7 @@ set(NETWORK_QUERY_HEADER_LIST network/query/networkquery.h
     network/query/getmailpropertiesquery.h
     network/query/getpicturepropertiesquery.h
     network/query/timedpicturesquery.h
+	network/query/settingsquery.h
 	)
 	
 set(GUI_HEADER_LIST gui/traysettings.h
@@ -83,6 +84,7 @@ set(NETWORK_QUERY_SOURCE_LIST network/query/picturequery.cpp
     network/query/getmailpropertiesquery.cpp 
     network/query/getpicturepropertiesquery.cpp 
     network/query/timedpicturesquery.cpp
+	network/query/settingsquery.cpp
 	)
 	
 set(GUI_SOURCE_LIST gui/traysettings.cpp 
