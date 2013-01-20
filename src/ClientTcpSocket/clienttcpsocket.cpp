@@ -60,6 +60,11 @@ namespace clientsocket
         querryFactory_.add<networkquery::GetPicturePropertiesQuerry>(GETPICTURETIMER);
     }
 
+    bool ClientTcpSocket::isConnected()
+    {
+        return state() == QAbstractSocket::ConnectedState;
+    }
+
     void ClientTcpSocket::getAllWindows()
     {
         operation_ = GETALLWINDOWS;

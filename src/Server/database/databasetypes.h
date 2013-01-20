@@ -269,6 +269,7 @@ namespace database
         {
             MailParams()
                 : interval(0)
+                , serverPort(0)
             {
             }
 

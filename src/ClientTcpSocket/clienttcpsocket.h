@@ -40,6 +40,9 @@ namespace clientsocket
             return socketNumber_;
         }
 
+        // common
+        virtual bool isConnected();
+
         // public functions
         void getAllWindows();
         void getAllControls(const QString& windowName);

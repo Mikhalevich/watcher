@@ -259,30 +259,39 @@ void PluginExample::on_pbSizeOneToOne_clicked()
 
 void PluginExample::on_pbSettings_clicked()
 {
-    // ask mail properties from server in async mode
-    getClientSocket().getMailProperties();
-    // ask picture timer from server in async mode
-    getClientSocket().getPictureTimer();
+    clientsocket::IClientSocket& socket = getClientSocket();
 
-    if (dialog_.exec() == QDialog::Accepted)
+    if (socket.isConnected())
     {
-        getClientSocket().pictureTimer(dialog_.picturesInterval());
+        // ask mail properties from server in async mode
+        socket.getMailProperties();
+        // ask picture timer from server in async mode
+        socket.getPictureTimer();
 
-        int interval;
-        if (dialog_.changeMailSettings())
+        if (dialog_.exec() == QDialog::Accepted)
         {
-            interval = dialog_.mailInterval();
-        }
-        else
-        {
-            // release timer
-            interval = 0;
-        }
+            socket.pictureTimer(dialog_.picturesInterval());
 
-        getClientSocket().mailProperties(dialog_.server(), dialog_.serverPort(),
-                                         dialog_.user(), dialog_.password(),
-                                         dialog_.sendFrom(), dialog_.sendTo(),
-                                         interval);
+            int interval;
+            if (dialog_.changeMailSettings())
+            {
+                interval = dialog_.mailInterval();
+            }
+            else
+            {
+                // release timer
+                interval = 0;
+            }
+
+            socket.mailProperties(dialog_.server(), dialog_.serverPort(),
+                                             dialog_.user(), dialog_.password(),
+                                             dialog_.sendFrom(), dialog_.sendTo(),
+                                             interval);
+        }
+    }
+    else
+    {
+        // maybe message "socket is not connected"
     }
 }
 

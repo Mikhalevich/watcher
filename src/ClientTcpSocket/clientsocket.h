@@ -14,6 +14,9 @@ namespace clientsocket
         {
         }
 
+        // common functions
+        virtual bool isConnected() = 0;
+
         // public functions
         virtual void getAllWindows() = 0;
         virtual void getAllControls(const QString& windowName) = 0;
