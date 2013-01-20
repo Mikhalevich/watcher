@@ -268,14 +268,21 @@ void PluginExample::on_pbSettings_clicked()
         // ask picture timer from server in async mode
         socket.getPictureTimer();
 
-        if (dialog_.exec() == QDialog::Accepted)
+        PropertyDialog propertyDialog;
+        connect(this, SIGNAL(setPictureInterval(const int)), &propertyDialog, SLOT(setPictureInterval(const int)));
+        connect(this, SIGNAL(setMailProperties(const QString&, int, const QString&, const QString&,
+            const QString&, const QStringList&, int)), 
+            &propertyDialog, SLOT(setMailProperties(const QString&, int, const QString&, const QString&,
+            const QString&, const QStringList&, int)));
+
+        if (propertyDialog.exec() == QDialog::Accepted)
         {
-            socket.pictureTimer(dialog_.picturesInterval());
+            socket.pictureTimer(propertyDialog.picturesInterval());
 
             int interval;
-            if (dialog_.changeMailSettings())
+            if (propertyDialog.changeMailSettings())
             {
-                interval = dialog_.mailInterval();
+                interval = propertyDialog.mailInterval();
             }
             else
             {
@@ -283,9 +290,9 @@ void PluginExample::on_pbSettings_clicked()
                 interval = 0;
             }
 
-            socket.mailProperties(dialog_.server(), dialog_.serverPort(),
-                                             dialog_.user(), dialog_.password(),
-                                             dialog_.sendFrom(), dialog_.sendTo(),
+            socket.mailProperties(propertyDialog.server(), propertyDialog.serverPort(),
+                                             propertyDialog.user(), propertyDialog.password(),
+                                             propertyDialog.sendFrom(), propertyDialog.sendTo(),
                                              interval);
         }
     }
@@ -313,7 +320,7 @@ void PluginExample::readData(const AbstractData &data)
     case GETMAILPROPERTIES:
     {
         const MailPropertiesData& mpd = static_cast<const MailPropertiesData&>(data);
-        dialog_.setMailProperties(mpd.server_, mpd.serverPort_, mpd.user_, mpd.password_, mpd.sendFrom_, mpd.sendTo_, mpd.interval_);
+        emit setMailProperties(mpd.server_, mpd.serverPort_, mpd.user_, mpd.password_, mpd.sendFrom_, mpd.sendTo_, mpd.interval_);
     }
         break;
 
@@ -328,7 +335,7 @@ void PluginExample::readData(const AbstractData &data)
     case GETPICTURETIMER:
     {
         const PicturePropertiesData& pp = static_cast<const PicturePropertiesData&>(data);
-        dialog_.setPictureInterval(pp.interval());
+        emit setPictureInterval(pp.interval());
     }
         break;
 

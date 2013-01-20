@@ -57,14 +57,14 @@ public:
 
     bool changeMailSettings() const;
 
+public slots:
     void setMailProperties(const QString& server, int serverPort,
-                           const QString& user, const QString& password,
-                           const QString& sendFrom, const QStringList& sendTo,
-                           int interval);
+        const QString& user, const QString& password,
+        const QString& sendFrom, const QStringList& sendTo,
+        int interval);
 
     void setPictureInterval(const int interval);
 
-public slots:
     virtual void accept();
 
 private:

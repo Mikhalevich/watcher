@@ -64,6 +64,14 @@ private slots:
 
     void changePicture(const QPixmap& pixmap);
 
+signals:
+    void setMailProperties(const QString& server, int serverPort,
+        const QString& user, const QString& password,
+        const QString& sendFrom, const QStringList& sendTo,
+        int interval);
+
+    void setPictureInterval(const int interval);
+
 private:
     // set picture to scrollArea with scale factor
     void setPicture(const QPixmap& pixmap);
@@ -71,7 +79,6 @@ private:
     /* form */
     Ui::PluginExample *ui;
     PicturesWidget* picturesWidget_;
-    PropertyDialog dialog_;
 
     // actions
     QAction *savePictureAction_;
