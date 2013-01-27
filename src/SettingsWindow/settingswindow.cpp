@@ -145,8 +145,10 @@ void SettingsWindow::retranslateUi()
     impl_->labelTrayIcon->setText(tr("Tray icon"));
     impl_->cbDefaultPort->setText(tr("Default"));
 
-    impl_->comboStartupMode->addItems(QStringList() << QLatin1String("Automatic") << QLatin1String("Manual"));
-    impl_->comboTrayIcon->addItems(QStringList() << QLatin1String("Show") << QLatin1String("Hide"));
+    impl_->comboStartupMode->clear();
+    impl_->comboStartupMode->addItems(QStringList() << tr("Automatic") << tr("Manual"));
+    impl_->comboTrayIcon->clear();
+    impl_->comboTrayIcon->addItems(QStringList() << tr("Show") << tr("Hide"));
 
     impl_->setSettingsButton_->setText(tr("Set settings"));
     impl_->reloadButton_->setText(tr("Reload settings"));
