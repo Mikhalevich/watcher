@@ -58,8 +58,9 @@ public:
     QComboBox *comboStartupMode;
     QComboBox *comboTrayIcon;
 
-    // common ok and cancel buttons
-    QDialogButtonBox *buttonBox;
+    // common set and reload buttons
+    QPushButton *setSettingsButton_;
+    QPushButton *reloadButton_;
 };
 
 SettingsWindow::SettingsWindow(QWidget *parent) 
@@ -92,18 +93,18 @@ SettingsWindow::SettingsWindow(QWidget *parent)
     commonSettingsWidget->setLayout(commonSettingLayout);
 
     mainLayout->addWidget(commonSettingsWidget);
-    mainLayout->addStretch();
 
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
-    impl_->buttonBox = new QDialogButtonBox(this);
-    impl_->buttonBox->addButton(QDialogButtonBox::Ok);
-    impl_->buttonBox->addButton(QDialogButtonBox::Cancel);
+    impl_->setSettingsButton_ = new QPushButton(this);
+    impl_->reloadButton_ = new QPushButton(this);
     buttonLayout->addStretch();
-    buttonLayout->addWidget(impl_->buttonBox);
+    buttonLayout->addWidget(impl_->reloadButton_);
+    buttonLayout->addWidget(impl_->setSettingsButton_);
     QWidget *buttonWidget = new QWidget(this);
     buttonWidget->setLayout(buttonLayout);
 
     mainLayout->addWidget(buttonWidget);
+    mainLayout->addStretch();
     setLayout(mainLayout);
 
     createConnections();
@@ -146,12 +147,16 @@ void SettingsWindow::retranslateUi()
 
     impl_->comboStartupMode->addItems(QStringList() << QLatin1String("Automatic") << QLatin1String("Manual"));
     impl_->comboTrayIcon->addItems(QStringList() << QLatin1String("Show") << QLatin1String("Hide"));
+
+    impl_->setSettingsButton_->setText(tr("Set settings"));
+    impl_->reloadButton_->setText(tr("Reload settings"));
 }
 
 void SettingsWindow::createConnections()
 {
     connect(impl_->cbDefaultPort, SIGNAL(toggled(bool)), this, SLOT(onDefaultPortChecked(bool)));
-    connect(impl_->buttonBox, SIGNAL(accepted()), this, SLOT(onAcceptSettings()));
+    connect(impl_->setSettingsButton_, SIGNAL(clicked()), this, SLOT(onSetSettings()));
+    connect(impl_->reloadButton_, SIGNAL(clicked()), this, SLOT(onReloadSettings()));
 }
 
 void SettingsWindow::onDefaultPortChecked(bool checked)
@@ -172,7 +177,7 @@ void SettingsWindow::readSettings()
     }
 }
 
-void SettingsWindow::onAcceptSettings()
+void SettingsWindow::onSetSettings()
 {
     try
     {
@@ -205,6 +210,11 @@ void SettingsWindow::onAcceptSettings()
     {
         getClientSocket().setSettings(port, startupMode, trayIcon);
     }
+}
+
+void SettingsWindow::onReloadSettings()
+{
+    readSettings();
 }
 
 void SettingsWindow::populateSettings(const SettingsData& settings)

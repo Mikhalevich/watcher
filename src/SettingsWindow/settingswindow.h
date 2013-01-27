@@ -45,7 +45,8 @@ protected:
 
 private slots:
     void onDefaultPortChecked(bool checked);
-    void onAcceptSettings();
+    void onSetSettings();
+    void onReloadSettings();
     void readSettings();
 
 private:
