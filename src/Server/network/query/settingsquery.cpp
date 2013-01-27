@@ -48,7 +48,7 @@ namespace network
 
         void SetSettingsQuery::execute()
         {
-            database::databasequery::StoreSettingsQuery query(port_, startupMode_ == 1, trayIcon_ == 1);
+            database::databasequery::StoreSettingsQuery query(port_, trayIcon_ == 1, startupMode_ == 1);
             query.execute();
 
             // change startupMode
