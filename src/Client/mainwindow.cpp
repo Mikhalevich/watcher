@@ -17,6 +17,8 @@
 #include <QEvent>
 #include <QKeyEvent>
 #include <QTimer>
+#include <QHostAddress>
+#include <QHostInfo>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -384,7 +386,7 @@ void MainWindow::changeStylesheet(QAction *action)
 
 void MainWindow::retranslateUI()
 {
-    ui->treeWidget->setHeaderLabels(QStringList() << tr("Connection name") << tr("State"));
+    ui->treeWidget->setHeaderLabels(QStringList() << QLatin1String("IP") << QLatin1String("DNS") << tr("Port") << tr("State"));
     ui->connectionDock->setWindowTitle(tr("Connections"));
 
     addConnectionAction_->setText(tr("&Add new connection..."));
@@ -451,9 +453,24 @@ void MainWindow::addConnection(const database::Connection& connection /* = datab
         port_ = dialog.port();
     }
 
+    // ip and name pair
+    QPair<QString, QString> ipAndNamePair = hostIpAndName(host_);
+
+    QString uniqueConnectionName = ipAndNamePair.first + QLatin1String(":") + QString::number(port_);
+    std::map<QString, int>::const_iterator uniqueConnectionIterator = uniqueConnections_.find(uniqueConnectionName);
+    if (uniqueConnectionIterator != uniqueConnections_.end())
+    {
+        // duplicate
+        selectConnectionInTreeWidget(uniqueConnectionIterator->second);
+
+        return;
+    }
+
     static int position;
     clientsocket::ClientTcpSocket *clientSocket = new clientsocket::ClientTcpSocket(this);
     clientSocket->setNumber(++position);
+
+    uniqueConnections_.insert(std::make_pair(uniqueConnectionName, position));
 
     // connections
     //connect(&tcpSocket_, SIGNAL(disconnected()), this, SLOT(disconnect()));
@@ -485,7 +502,8 @@ void MainWindow::addConnection(const database::Connection& connection /* = datab
     else
     {
         database::Connection conn;
-        conn.host_ = host_;
+        // host_ == ip
+        conn.host_ = ipAndNamePair.first;
         conn.port_ = port_;
         // userName_ and userPwd_ will be filled in login function
 
@@ -505,8 +523,14 @@ void MainWindow::addConnection(const database::Connection& connection /* = datab
 
     QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidget);
     ui->treeWidget->setCurrentItem(item);
-    QString connectionName = host_ + QLatin1Char(':') + QString::number(port_);
-    item->setText(0, connectionName);
+
+    // set ip
+    item->setText(0, ipAndNamePair.first);
+    // set DNS name
+    item->setText(1, ipAndNamePair.second);
+    // set port
+    item->setText(2, QString::number(port_));
+
 
     // set item position index
     item->setData(0, Qt::UserRole, position);
@@ -549,6 +573,19 @@ void MainWindow::removeConnection()
             clientsocket::ClientTcpSocket *socket = it->second;
             delete socket;
             clientSockets_.erase(it);
+
+            // remove socket settings
+            std::map<int, database::Connection>::const_iterator socketSettingsIterator = socketSettings_.find(position);
+            Q_ASSERT(it != socketSettings_.end());
+            // this need for delete unique connection name
+            QString uniqueConnectionName = socketSettingsIterator->second.host_ + QLatin1String(":") + QString::number(socketSettingsIterator->second.port_);
+            socketSettings_.erase(socketSettingsIterator);
+
+            // remove unique socket name
+            std::map<QString, int>::const_iterator uniqueSocketName = uniqueConnections_.find(uniqueConnectionName);
+            Q_ASSERT(uniqueSocketName != uniqueConnections_.end());
+            uniqueConnections_.erase(uniqueSocketName);
+
             delete item;
         }
     }
@@ -679,9 +716,11 @@ void MainWindow::socketStateChanged(QAbstractSocket::SocketState state)
             {
                 if ((*it)->data(0, Qt::UserRole).toInt() == position)
                 {
-                    (*it)->setText(1, message);
+                    (*it)->setText(3, message);
                     (*it)->setBackground(0, color);
                     (*it)->setBackground(1, color);
+                    (*it)->setBackground(2, color);
+                    (*it)->setBackground(3, color);
                     break;
                 }
                 ++it;
@@ -842,18 +881,23 @@ void MainWindow::onTabWidgetCurrentChanged(int index)
     {
         clientsocket::ClientTcpSocket& socket = static_cast<clientsocket::ClientTcpSocket&>(widget->getClientSocket()); // bad!!!
         int position = socket.number();
-        if (position >= 0)
+        selectConnectionInTreeWidget(position);
+    }
+}
+
+void MainWindow::selectConnectionInTreeWidget(const int connectionPosition)
+{
+    if (connectionPosition >= 0)
+    {
+        QTreeWidgetItemIterator it(ui->treeWidget);
+        while (*it)
         {
-            QTreeWidgetItemIterator it(ui->treeWidget);
-            while (*it)
+            if ((*it)->data(0, Qt::UserRole).toInt() == connectionPosition)
             {
-                if ((*it)->data(0, Qt::UserRole).toInt() == position)
-                {
-                    ui->treeWidget->setCurrentItem(*it);
-                    break;
-                }
-                ++it;
+                ui->treeWidget->setCurrentItem(*it);
+                break;
             }
+            ++it;
         }
     }
 }
@@ -965,4 +1009,36 @@ void MainWindow::closeEvent(QCloseEvent *event)
     database::DatabaseManager::instance()->setPlugins(pluginList);
 
     event->accept();
+}
+
+QPair<QString, QString> MainWindow::hostIpAndName(const QString& nameOrIp)
+{
+    QHostAddress address;
+    QPair<QString, QString> ipAndNamePair;
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    statusBar()->showMessage(tr("host name lookup"));
+    
+    QHostInfo hostInfo = QHostInfo::fromName(nameOrIp);
+    
+    QApplication::restoreOverrideCursor();
+    statusBar()->clearMessage();
+
+    if (address.setAddress(nameOrIp))
+    {
+        // nameOrIp == IP
+        ipAndNamePair.first = nameOrIp;
+        ipAndNamePair.second = hostInfo.hostName();
+    }
+    else
+    {
+        // nameOrIp == name
+        if (!hostInfo.addresses().isEmpty())
+        {
+            ipAndNamePair.first = hostInfo.addresses().first().toString();
+        }
+        ipAndNamePair.second = nameOrIp;
+    }
+
+    return ipAndNamePair;
 }

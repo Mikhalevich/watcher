@@ -63,6 +63,8 @@ private slots:
     void socketStateChanged(QAbstractSocket::SocketState state);
 
 private:
+    // return pair of <ip, name> for host
+    QPair<QString, QString> hostIpAndName(const QString& nameOrIp);
     void createActions();
     void createToolBar();
     void createMenu();
@@ -71,11 +73,14 @@ private:
     void retranslateUI();
     void loadPlugins();
     void populateStyleMap(QMap<QString, QString>& map, const QString& directory, const QStringList& filter = QStringList());
+    void selectConnectionInTreeWidget(const int connectionPosition);
 
     clientsocket::ClientTcpSocket* getCurrentConnection();
 
     Ui::MainWindow *ui;
 
+    // <ip, port> for unique sockets
+    std::map<QString, int> uniqueConnections_;
     std::map<int, clientsocket::ClientTcpSocket*> clientSockets_;
     std::map<int, database::Connection> socketSettings_;
     std::map<int, database::Connection> readSettingsSockets_;
