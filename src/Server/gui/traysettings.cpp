@@ -44,14 +44,14 @@ void TraySettings::createMenu()
 void TraySettings::retranslateUi()
 {
     settingsAction_->setText(tr("Settings..."));
-    settingsAction_->setShortcut(tr("Ctrl+S"));
+    //settingsAction_->setShortcut(tr("Ctrl+S"));
 
     /*userAction_->setText(tr("User settings..."));
     userAction_->setShortcut(tr("Ctrl+U"));
     */
 
     quitAction_->setText(tr("quit"));
-    quitAction_->setShortcut(tr("Ctrl+Q"));
+    //quitAction_->setShortcut(tr("Ctrl+Q"));
 
     setToolTip(QCoreApplication::applicationFilePath());
 }

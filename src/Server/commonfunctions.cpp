@@ -20,12 +20,7 @@ void parseCommandLine(int &port)
     {
         if (argList[i] == "-m")
         {
-#ifdef Q_OS_WIN
-            const QString cInCircle("(C)");
-#else
-            const QChar cInCircle(0xA9);
-#endif
-            QString copyright = QLatin1String("Copyright ") + cInCircle + " Michael Mihalevich. All rights not reserved";
+            QLatin1String copyright("Michael Mihalevich");
             qDebug() << copyright;
         }
         else if (argList[i] == "-p")

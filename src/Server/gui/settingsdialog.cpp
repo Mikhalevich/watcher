@@ -68,7 +68,7 @@ void SettingsDialog::retranslateUi()
     aboutProgrammText.append(QLatin1String("v.") + QCoreApplication::instance()->applicationVersion());
     aboutProgrammText.append(tr(" for"));
 #if defined Q_OS_WIN
-    aboutProgrammText.append(QLatin1String(" Windows 7/Vista/XP"));
+    aboutProgrammText.append(QLatin1String(" Windows"));
 #elif defined Q_OS_LINUX
     aboutProgrammText.append(QLatin1String(" Linux"));
 #endif
