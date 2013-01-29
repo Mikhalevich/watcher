@@ -26,13 +26,6 @@ namespace global
             // autorization
             AUTORIZATION,
 
-            // windows operations
-            GETALLWINDOWS,
-            GETALLCONTROLS,
-            SETCONTROLTEXT,
-            GETCONTROLINFO,
-            RUNPROCESS,
-
             // pictures operations
             GETPICTURE,
             GETALLPICTURES,
@@ -43,18 +36,12 @@ namespace global
             MAILPROPERTIES,
             GETMAILPROPERTIES,
 
-            // executin process
+            // execution process
             EXECUTIONREPORT,
 
             // settings
             GETSETTINGS,
             SETSETTINGS
-        };
-
-        enum ControlType {
-            EDIT,
-            BUTTON,
-            COMBOBOX
         };
 
         /* the end in transmittion */

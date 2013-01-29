@@ -6,11 +6,6 @@
 #include "tcpserver.h"
 #include "query/networkquery.h"
 #include "query/picturequery.h"
-#include "query/processquery.h"
-#include "query/windowsquery.h"
-#include "query/controlsquery.h"
-#include "query/setcontroltextquery.h"
-#include "query/getcontrolinfoquery.h"
 #include "query/allpicturesquery.h"
 #include "query/currentdatepicturesquery.h"
 #include "query/periodpicturesquery.h"
@@ -38,11 +33,6 @@ namespace network
 
     void TcpSocket::fillFactory()
     {
-        queryFactory_.add<networkquery::WindowsQuery>(GETALLWINDOWS);
-        queryFactory_.add<networkquery::ControlsQuery>(GETALLCONTROLS);
-        queryFactory_.add<networkquery::SetControlTextQuery>(SETCONTROLTEXT);
-        queryFactory_.add<networkquery::GetControlInfoQuery>(GETCONTROLINFO);
-        queryFactory_.add<networkquery::ProcessQuery>(RUNPROCESS);
         queryFactory_.add<networkquery::PictureQuery>(GETPICTURE);
         queryFactory_.add<networkquery::AllPicturesQuery>(GETALLPICTURES);
         queryFactory_.add<networkquery::CurrentDatePicturesQuery>(GETCURRENTDATEPICTURES);

@@ -43,13 +43,6 @@ namespace clientsocket
         // common
         virtual bool isConnected();
 
-        // public functions
-        void getAllWindows();
-        void getAllControls(const QString& windowName);
-        void setControlText(qint16 controlIndex, qint8 controlType, const QString& newControlText);
-        void getControlInfo(qint16 controlIndex, qint8 controlType);
-        void runProcess(const QString& processLine);
-
         // take screenshot
         void getPicture();
         // get all pictures in database

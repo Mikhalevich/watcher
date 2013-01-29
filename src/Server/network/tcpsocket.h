@@ -6,7 +6,6 @@
 #include <QTimer>
 
 #include <global.h>
-#include "library2.h"
 #include "querythread.h"
 #include "helper/objectfactory.h"
 

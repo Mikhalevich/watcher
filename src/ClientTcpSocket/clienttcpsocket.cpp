@@ -6,9 +6,6 @@
 #include "responcedata.h"
 #include "querry/abstractquerry.h"
 #include "querry/picturequerry.h"
-#include "querry/windowsquerry.h"
-#include "querry/controlsquerry.h"
-#include "querry/getcontrolinfoquerry.h"
 #include "querry/getmailpropertiesquerry.h"
 #include "querry/executionreportquerry.h"
 #include "querry/getpicturepropertiesquerry.h"
@@ -52,10 +49,7 @@ namespace clientsocket
     void ClientTcpSocket::fillFactory()
     {
         //querryFactory_.add<>(AUTORIZATION);
-        querryFactory_.add<networkquery::WindowsQuerry>(GETALLWINDOWS);
         querryFactory_.add<networkquery::PictureQuerry>(GETPICTURE);
-        querryFactory_.add<networkquery::ControlsQuerry>(GETALLCONTROLS);
-        querryFactory_.add<networkquery::GetControlInfoQuerry>(GETCONTROLINFO);
         querryFactory_.add<networkquery::GetMailPropertiesQuerry>(GETMAILPROPERTIES);
         querryFactory_.add<networkquery::ExecutionReportQuerry>(EXECUTIONREPORT);
         querryFactory_.add<networkquery::GetPicturePropertiesQuerry>(GETPICTURETIMER);
@@ -65,86 +59,6 @@ namespace clientsocket
     bool ClientTcpSocket::isConnected()
     {
         return state() == QAbstractSocket::ConnectedState;
-    }
-
-    void ClientTcpSocket::getAllWindows()
-    {
-        operation_ = GETALLWINDOWS;
-        size_ = 0;
-
-        // send only one code
-        QDataStream out(this);
-        out << operation_ << size_;
-    }
-
-    void ClientTcpSocket::getAllControls(const QString& windowName)
-    {
-        operation_ = GETALLCONTROLS;
-
-        QString window = windowName + QLatin1Char('\n');
-        QByteArray bytes = window.toUtf8();
-
-        // calculating size of command data
-        size_ = bytes.size();
-
-        // send code with window name
-        QDataStream out(this);
-        out << operation_ << size_;
-
-        write(bytes);
-    }
-
-    void ClientTcpSocket::setControlText(qint16 controlIndex, qint8 controlType, const QString& newControlText)
-    {
-        operation_ = SETCONTROLTEXT;
-
-        QString newText(newControlText);
-        // replace all new line to number 2 character
-        newText.replace(QLatin1Char('\n'), QLatin1Char(0x02));
-        // add new line
-        newText.append(QLatin1String("\n"));
-        QByteArray bytes = newText.toUtf8();
-
-        // calculating size of command data
-        size_ = sizeof(controlIndex) + sizeof(controlType) + bytes.size();
-
-        // send code with number of control, control type and new control text
-        QDataStream out(this);
-        out << operation_ << size_;
-        out << controlIndex;
-        out << controlType;
-
-        write(bytes);
-    }
-
-    void ClientTcpSocket::getControlInfo(qint16 controlIndex, qint8 controlType)
-    {
-        operation_ = GETCONTROLINFO;
-
-        // calculating size of command data
-        size_ = sizeof(controlIndex) + sizeof(controlType);
-
-        // send code with number of control, control type and new control text
-        QDataStream out(this);
-        out << operation_ << size_;
-        out << controlIndex;
-        out << controlType;
-    }
-
-    void ClientTcpSocket::runProcess(const QString& processLine)
-    {
-        operation_ = RUNPROCESS;
-
-        QString line(processLine);
-        line += QLatin1Char('\n');
-        QByteArray bytes = line.toUtf8();
-
-        // calculating size of command data
-        size_ = bytes.size();
-
-        QDataStream out(this);
-        out << operation_ << size_;
-        write(bytes);
     }
 
     void ClientTcpSocket::getPicture()

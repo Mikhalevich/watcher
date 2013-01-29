@@ -6,7 +6,6 @@
 #include <QObject>
 
 #include "../tcpsocket.h"
-#include "library2.h"
 #include "global.h"
 
 using namespace global::params;

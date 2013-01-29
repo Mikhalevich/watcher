@@ -12,11 +12,6 @@ set(NETWORK_HEADER_LIST network/tcpserver.h
 
 set(NETWORK_QUERY_HEADER_LIST network/query/networkquery.h
     network/query/picturequery.h
-    network/query/processquery.h
-    network/query/windowsquery.h
-    network/query/controlsquery.h
-    network/query/setcontroltextquery.h
-    network/query/getcontrolinfoquery.h
 	network/query/allpicturesquery.h
     network/query/currentdatepicturesquery.h
     network/query/periodpicturesquery.h
@@ -70,12 +65,7 @@ set(NETWORK_SOURCE_LIST network/tcpserver.cpp
 	network/querythread.cpp
 	)
 	
-set(NETWORK_QUERY_SOURCE_LIST network/query/picturequery.cpp 
-    network/query/processquery.cpp 
-    network/query/windowsquery.cpp 
-    network/query/controlsquery.cpp 
-    network/query/setcontroltextquery.cpp 
-    network/query/getcontrolinfoquery.cpp 
+set(NETWORK_QUERY_SOURCE_LIST network/query/picturequery.cpp  
 	network/query/allpicturesquery.cpp  
     network/query/currentdatepicturesquery.cpp 
     network/query/periodpicturesquery.cpp
@@ -161,7 +151,7 @@ link_directories(${CMAKE_CURRENT_BINARY_DIR})
 	
 set(LIBRARY_DEPENDENCIES 
 	${QT_QTMAIN_LIBRARY} # removes console from build
-	library2)
+	)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}

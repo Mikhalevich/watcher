@@ -12,10 +12,7 @@ set(HEADER_MAIN_LIST
 # objectfactory.h
 
 set(HEADER_QUERY_LIST
-    querry/windowsquerry.h 
     querry/picturequerry.h 
-    querry/getcontrolinfoquerry.h 
-    querry/controlsquerry.h 
     querry/abstractquerry.h 
     querry/getmailpropertiesquerry.h 
     querry/executionreportquerry.h 
@@ -34,10 +31,7 @@ set(SOURCE_MAIN_LIST
 	)
 	
 set(SOURCE_QUERY_LIST 
-	querry/windowsquerry.cpp 
-    querry/picturequerry.cpp 
-    querry/getcontrolinfoquerry.cpp 
-    querry/controlsquerry.cpp 
+    querry/picturequerry.cpp  
     querry/getmailpropertiesquerry.cpp 
     querry/executionreportquerry.cpp 
     querry/getpicturepropertiesquerry.cpp
