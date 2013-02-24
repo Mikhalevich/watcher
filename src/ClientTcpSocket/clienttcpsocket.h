@@ -83,12 +83,12 @@ namespace clientsocket
         int socketNumber_;
 
         // outgoing
-        qint8 operation_;
-        qint32 size_;
+        global::types::operation_t operation_;
+        global::types::operation_size_t size_;
 
         // incoming
-        qint8 serverOperation_;
-        qint32 serverSize_;
+        global::types::operation_t serverOperation_;
+        global::types::operation_size_t serverSize_;
     };
 } // clientsocket
 

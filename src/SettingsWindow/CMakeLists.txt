@@ -1,6 +1,6 @@
 
 set(ProjectSettings SettingsWindow)
-project(${ProjectName})
+project(${ProjectSettings})
 
 set(HEADER_LIST )
 	
