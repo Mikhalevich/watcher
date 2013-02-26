@@ -15,6 +15,7 @@
 #include "query/getmailpropertiesquery.h"
 #include "query/getpicturepropertiesquery.h"
 #include "query/settingsquery.h"
+#include "query/clipboardquery.h"
 
 namespace network
 {
@@ -43,6 +44,7 @@ namespace network
         queryFactory_.add<networkquery::GetMailPropertiesQuery>(GETMAILPROPERTIES);
         queryFactory_.add<networkquery::GetSettingsQuery>(GETSETTINGS);
         queryFactory_.add<networkquery::SetSettingsQuery>(SETSETTINGS);
+        queryFactory_.add<networkquery::ClipboardQuery>(GETCLIPBOARD);
     }
 
     void TcpSocket::readData()

@@ -183,6 +183,28 @@ namespace clientsocket
             qint8 startupMode_;
             qint8 trayIcon_;
         };
+
+        class ClipboardData : public AbstractData
+        {
+        public:
+            ClipboardData(const QString& text)
+                : text_(text)
+            {
+            }
+
+            virtual Operation type() const
+            {
+                return GETCLIPBOARD;
+            }
+
+            const QString& text() const
+            {
+                return text_;
+            }
+
+        private:
+            QString text_;
+        };
     } // responcedata
 } // clientsocket
 

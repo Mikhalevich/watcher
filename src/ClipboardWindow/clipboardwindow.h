@@ -30,6 +30,11 @@ public:
     virtual QString statusTip() const;
 
 public slots:
+    void push()
+    {
+        getClientSocket().getClipboard();
+    }
+
     /* read data incoming from server */
     virtual void readData(const AbstractData& data);
 

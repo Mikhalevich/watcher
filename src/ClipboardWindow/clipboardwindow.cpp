@@ -1,5 +1,8 @@
 
 #include <QtPlugin>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QHBoxLayout>
 
 #include "clipboardwindow.h"
 
@@ -8,6 +11,14 @@ ClipboardWindow::ClipboardWindow(QWidget *parent) :
 {   
     /* retranslte all visible strings */
     retranslateUi();
+
+    QPushButton *push = new QPushButton(tr("push"), this);
+    connect(push, SIGNAL(clicked()), this, SLOT(push()));
+
+    QHBoxLayout *layout = new QHBoxLayout(this);
+    layout->addWidget(push);
+    
+    setLayout(layout);
 }
 
 QIcon ClipboardWindow::icon() const
@@ -33,29 +44,10 @@ void ClipboardWindow::retranslateUi()
 
 void ClipboardWindow::readData(const AbstractData &data)
 {
-    switch (data.type())
+    if (data.type() == GETCLIPBOARD)
     {
-    /*case GETALLWINDOWS:
-    {
-        const WindowData& windowData = static_cast<const WindowData&>(data);
-    }
-        break;
-
-    case GETALLCONTROLS:
-    {
-        const ControlData& controlData = static_cast<const ControlData&>(data);
-    }
-        break;
-
-    case GETCONTROLINFO:
-    {
-        const ControlInfoData& controlInfoData = static_cast<const ControlInfoData&>(data);
-    }
-        break;
-        */
-
-    default:
-        Q_ASSERT("You should never be here" && false);
+        const clientsocket::responcedata::ClipboardData& clipboard = static_cast<const clientsocket::responcedata::ClipboardData&>(data);
+        QMessageBox::information(this, QString(), clipboard.text());
     }
 }
 
