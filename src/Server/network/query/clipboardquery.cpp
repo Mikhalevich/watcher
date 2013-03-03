@@ -1,8 +1,10 @@
 
 #include <QClipboard>
 #include <QApplication>
+#include <QMimeData>
 
 #include "clipboardquery.h"
+#include "clipboardsingleton.h"
 
 namespace network
 {
@@ -17,14 +19,18 @@ namespace network
         {
             QByteArray dataToWrite;
 
-            QClipboard *clipboard = QApplication::clipboard();
-            QString text = clipboard->text();
+            // get clipboard data
+            QVariant data;
+            ClipboardSingleton::ClipboardType type;
+            ClipboardSingleton::instance()->clipboardData(data, type);
 
-            global::functions::writeDataToByteArray(dataToWrite, GETCLIPBOARD, text);
+            if (data.isValid())
+            {
+                global::functions::writeDataToByteArray(dataToWrite, GETCLIPBOARD, data);
 
-
-            // emit signal to write data to socket
-            emit writeData(dataToWrite);
+                // emit signal to write data to socket
+                emit writeData(dataToWrite);
+            }
         }
     } // networkquery
 } // network

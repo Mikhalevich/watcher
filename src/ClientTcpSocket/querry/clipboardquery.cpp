@@ -13,9 +13,9 @@ namespace clientsocket
         {
             QDataStream in(socket);
 
-            in >> text_;
+            in >> clipboardData_;
 
-            emit sendData(responcedata::ClipboardData(text_));
+            emit sendData(responcedata::ClipboardData(clipboardData_));
         }
     } // networkquery
 } // clientsocket

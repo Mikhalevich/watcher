@@ -51,6 +51,7 @@ set(MAIN_HEADER_LIST picturesingleton.h
     singletonthread.h
     commonfunctions.h
     helper/objectfactory.h
+	clipboardsingleton.h
 	)
 
 set(MOC_HEADER_LIST ${NETWORK_HEADER_LIST}
@@ -101,6 +102,7 @@ set(DATABASE_QUERY_SOURCE_LIST database/query/userquery.cpp
 set(MAIN_SOURCE_LIST main.cpp     
     picturetimer.cpp   
     commonfunctions.cpp 
+	clipboardsingleton.cpp
 	)
 
 set(SOURCE_LIST ${NETWORK_SOURCE_LIST}

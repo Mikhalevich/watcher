@@ -17,7 +17,7 @@ namespace clientsocket
             virtual void execute(QTcpSocket* socket);
 
         private:
-            QString text_; // temp
+            QVariant clipboardData_;
         };
     } // networkquery
 } // clientsocket

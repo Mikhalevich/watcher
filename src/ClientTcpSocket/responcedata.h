@@ -3,6 +3,8 @@
 
 #include "global.h"
 
+#include <QVariant>
+
 namespace clientsocket
 {
     namespace responcedata
@@ -187,8 +189,8 @@ namespace clientsocket
         class ClipboardData : public AbstractData
         {
         public:
-            ClipboardData(const QString& text)
-                : text_(text)
+            ClipboardData(const QVariant& clipboardData)
+                : clipboardData_(clipboardData)
             {
             }
 
@@ -197,13 +199,13 @@ namespace clientsocket
                 return GETCLIPBOARD;
             }
 
-            const QString& text() const
+            const QVariant& clipboardData() const
             {
-                return text_;
+                return clipboardData_;
             }
 
         private:
-            QString text_;
+            QVariant clipboardData_;
         };
     } // responcedata
 } // clientsocket

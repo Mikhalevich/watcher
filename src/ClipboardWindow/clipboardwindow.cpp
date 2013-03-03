@@ -3,6 +3,8 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QHBoxLayout>
+#include <QLabel>
+#include <QApplication>
 
 #include "clipboardwindow.h"
 
@@ -47,7 +49,26 @@ void ClipboardWindow::readData(const AbstractData &data)
     if (data.type() == GETCLIPBOARD)
     {
         const clientsocket::responcedata::ClipboardData& clipboard = static_cast<const clientsocket::responcedata::ClipboardData&>(data);
-        QMessageBox::information(this, QString(), clipboard.text());
+
+        const QVariant& varData = clipboard.clipboardData();
+        switch (varData.type())
+        {
+        case QVariant::String:
+            QMessageBox::information(this, QString(), varData.toString());
+            break;
+
+        case QVariant::Image:
+            {
+                QLabel *label = new QLabel();
+                label->setPixmap(QPixmap::fromImage(varData.value<QImage>()));
+                label->show();
+            }
+            break;
+
+        default:
+            QMessageBox::information(this, QApplication::applicationName(), tr("Can't define clipboard data"));
+            break;
+        }
     }
 }
 
