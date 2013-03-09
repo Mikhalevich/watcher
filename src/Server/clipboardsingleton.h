@@ -30,6 +30,9 @@ public:
     void clipboardData(QVariant& data /* out */, ClipboardType& type /* out */);
     void setClipboadData(const QVariant& data, ClipboardType type);
 
+private slots:
+    void clipboardChanged();
+
 private:
     ClipboardSingleton(QObject *parent = NULL);
     ClipboardSingleton(const ClipboardSingleton&);

@@ -44,6 +44,7 @@ set(DATABASE_QUERY_HEADER_LIST database/query/abstractdatabasequery.h
 	database/query/mailquery.h
 	database/query/picturepropertiesquery.h
 	database/query/settingsquery.h
+	database/query/clipboardquery.h
 	)
 	
 set(MAIN_HEADER_LIST picturesingleton.h
@@ -97,6 +98,7 @@ set(DATABASE_QUERY_SOURCE_LIST database/query/userquery.cpp
 	database/query/mailquery.cpp
 	database/query/picturepropertiesquery.cpp
 	database/query/settingsquery.cpp
+	database/query/clipboardquery.cpp
 	)
 	
 set(MAIN_SOURCE_LIST main.cpp     

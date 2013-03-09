@@ -5,6 +5,9 @@
 #include <QEvent>
 #include <QDateTime>
 #include <QCoreApplication>
+#include <QVariant>
+
+#include "clipboardsingleton.h"
 
 namespace database
 {
@@ -34,7 +37,10 @@ namespace database
             GetPicturePropertiesEntity,
 
             SettingsEntity,
-            GetSettingsEntity
+            GetSettingsEntity,
+
+            ClipboardEntity,
+            GetClipboardEntity
 
         };
         //////////////////////////////////////////////////////////////////////////////////////////////
@@ -389,6 +395,39 @@ namespace database
             bool trayIcon_;
             bool startupMode_;
         };
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+
+        class ClipboardData : public IBaseData
+        {
+        public:
+            ClipboardData(const QVariant& data, ClipboardSingleton::ClipboardType clipboardType)
+                : data_(data)
+                , clipboardType_(clipboardType)
+            {
+            }
+
+            virtual const EntityType type() const
+            {
+                return ClipboardEntity;
+            }
+
+            const QVariant& data() const
+            {
+                Q_ASSERT(data_.isValid());
+                return data_;
+            }
+
+            ClipboardSingleton::ClipboardType clipboardType() const
+            {
+                Q_ASSERT(type_ != ClipboardSingleton::NONE);
+                return clipboardType_;
+            }
+
+        private:
+            QVariant data_;
+            ClipboardSingleton::ClipboardType clipboardType_;
+        };
+        //////////////////////////////////////////////////////////////////////////////////////////////////
 
         // events answer
         class DatabaseEvent : public QEvent
@@ -423,7 +462,7 @@ namespace database
 
         typedef QSharedPointer<IBaseData> IBaseDataPtr;
 
-        // functin that send DatabaseEvent
+        // function that send DatabaseEvent
         inline void sendDatabaseEvent(IBaseDataPtr pData, QObject *receiver, QObject *sender = 0)
         {
             databasetypes::DatabaseEvent *event = new databasetypes::DatabaseEvent(pData, sender);

@@ -6,12 +6,14 @@
 #include <QImage>
 
 #include "clipboardsingleton.h"
+#include "database/query/clipboardquery.h"
 
 ClipboardSingleton* ClipboardSingleton::instance_ = NULL;
 
 ClipboardSingleton::ClipboardSingleton(QObject *parent /* = NULL */)
     : QObject(parent)
 {
+    connect(QApplication::clipboard(), SIGNAL(dataChanged()), this, SLOT(clipboardChanged()));
 }
 
 void ClipboardSingleton::clipboardData(QVariant& data /* out */, ClipboardType& type /* out */)
@@ -76,5 +78,19 @@ void ClipboardSingleton::setClipboadData(const QVariant& data, ClipboardType typ
     default:
         Q_ASSERT("You sould't be here" && false);
         break;
+    }
+}
+
+void ClipboardSingleton::clipboardChanged()
+{
+    QVariant data;
+    ClipboardType type;
+
+    clipboardData(data, type);
+
+    if (type != NONE)
+    {
+        database::databasequery::StoreClipboardQuery query(data, type);
+        query.execute();
     }
 }

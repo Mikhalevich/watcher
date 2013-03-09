@@ -97,6 +97,17 @@ namespace database
         {
             throw std::runtime_error(q.lastError().text().toStdString());
         }
+
+        // creating clipboard table
+        if (!q.exec(QLatin1String("CREATE TABLE IF NOT EXISTS Clipboard("
+            "id INTEGER PRIMARY KEY, "
+            "data BLOB NOT NULL, "
+            "type INTEGER NOT NULL, " // 0 - bug, 1 - text, 2 - html, 3 - image
+            "date VARCHAR(255) DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now', 'localtime')) "
+            "); ")))
+        {
+            throw std::runtime_error(q.lastError().text().toStdString());
+        }
     }
 
     void DatabaseManager::customEvent(QEvent *event)
@@ -158,6 +169,14 @@ namespace database
 
             case databasetypes::GetSettingsEntity:
                 selectSettings(dEvent->sender());
+                break;
+
+            case databasetypes::ClipboardEntity:
+                storeClipboard(static_cast<databasetypes::ClipboardData&>(*base));
+                break;
+
+            case databasetypes::GetClipboardEntity:
+                selectClipboard();
                 break;
 
             default:
@@ -558,5 +577,47 @@ namespace database
         }
 
         databasetypes::sendDatabaseEvent(pData, receiver);
+    }
+
+    void DatabaseManager::storeClipboard(const databasetypes::ClipboardData& clipboard)
+    {
+        QSqlQuery q;
+
+        QMap<QString, QVariant> placeholders;
+        placeholders.insert(QLatin1String(":type"), clipboard.clipboardType());
+
+        // write data
+        switch (clipboard.clipboardType())
+        {
+        case ClipboardSingleton::TEXT:
+        case ClipboardSingleton::RICHTEXT:
+            placeholders.insert(QLatin1String(":data"), clipboard.data().toString());
+            break;
+
+        case ClipboardSingleton::IMAGE:
+            {
+                // write image
+                QImage image = clipboard.data().value<QImage>();
+                QByteArray bytes;
+                QBuffer buf(&bytes);
+                buf.open(QIODevice::WriteOnly);
+                image.save(&buf, "png");
+
+                placeholders.insert(QLatin1String(":data"), bytes);
+            }
+            break;
+
+        default:
+            Q_ASSERT("You should't be here" && false);
+        }
+
+        runQuerry(q, QLatin1String("INSERT INTO Clipboard(data, type)"
+            "VALUES(:data, :type); "),
+            placeholders);
+    }
+
+    void DatabaseManager::selectClipboard()
+    {
+        //todo
     }
 } // database

@@ -57,6 +57,9 @@ namespace database
         void storeSettings(databasetypes::SettingsData& settingsData);
         void selectSettings(QObject *receiver);
 
+        void storeClipboard(const databasetypes::ClipboardData& clipboard);
+        void selectClipboard();
+
         QSqlDatabase database_;
     };
 } // database
