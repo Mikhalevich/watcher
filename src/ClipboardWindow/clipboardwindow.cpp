@@ -5,6 +5,9 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QApplication>
+#include <QDeclarativeView>
+#include <QUrl>
+#include <QGraphicsObject>
 
 #include "clipboardwindow.h"
 
@@ -14,11 +17,15 @@ ClipboardWindow::ClipboardWindow(QWidget *parent) :
     /* retranslte all visible strings */
     retranslateUi();
 
-    QPushButton *push = new QPushButton(tr("push"), this);
-    connect(push, SIGNAL(clicked()), this, SLOT(push()));
+    QDeclarativeView *view = new QDeclarativeView(this);
+    view->setSource(QUrl("qrc:/qml/clipboard.qml"));
+
+    // connections
+    QObject *root = view->rootObject();
+    connect(root, SIGNAL(getClipboard()), this, SLOT(push()));
 
     QHBoxLayout *layout = new QHBoxLayout(this);
-    layout->addWidget(push);
+    layout->addWidget(view);
     
     setLayout(layout);
 }

@@ -22,6 +22,7 @@ find_package(Qt4 REQUIRED
 	QtCore 
 	QtGui 
 	QtNetwork
+	QtDeclarative
 	)
 include(${QT_USE_FILE})
 
