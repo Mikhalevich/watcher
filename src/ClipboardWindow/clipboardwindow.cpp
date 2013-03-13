@@ -18,6 +18,7 @@ ClipboardWindow::ClipboardWindow(QWidget *parent) :
     retranslateUi();
 
     QDeclarativeView *view = new QDeclarativeView(this);
+    view->setResizeMode(QDeclarativeView::SizeRootObjectToView);
     view->setSource(QUrl("qrc:/qml/clipboard.qml"));
 
     // connections
