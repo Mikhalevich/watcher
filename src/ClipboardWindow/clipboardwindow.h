@@ -29,11 +29,12 @@ public:
     /* tip to status bar */
     virtual QString statusTip() const;
 
-public slots:
-    void push()
-    {
-        getClientSocket().getClipboard();
-    }
+signals:
+    void textData(const QString& text);
+    void imageData(const QVariant& image);
+
+private slots:
+    void clipboard();
 
     /* read data incoming from server */
     virtual void readData(const AbstractData& data);

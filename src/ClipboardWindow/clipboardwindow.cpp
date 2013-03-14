@@ -8,6 +8,7 @@
 #include <QDeclarativeView>
 #include <QUrl>
 #include <QGraphicsObject>
+#include <QDeclarativeContext>
 
 #include "clipboardwindow.h"
 
@@ -21,9 +22,11 @@ ClipboardWindow::ClipboardWindow(QWidget *parent) :
     view->setResizeMode(QDeclarativeView::SizeRootObjectToView);
     view->setSource(QUrl("qrc:/qml/clipboard.qml"));
 
+    view->rootContext()->setContextProperty("clipboardWindow", this);
+
     // connections
     QObject *root = view->rootObject();
-    connect(root, SIGNAL(getClipboard()), this, SLOT(push()));
+    connect(root, SIGNAL(getClipboard()), this, SLOT(clipboard()));
 
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->addWidget(view);
@@ -46,11 +49,14 @@ QString ClipboardWindow::statusTip() const
     return tr("Clipboard Window");
 }
 
-
 void ClipboardWindow::retranslateUi()
 {
 }
 
+void ClipboardWindow::clipboard()
+{
+    getClientSocket().getClipboard();
+}
 
 void ClipboardWindow::readData(const AbstractData &data)
 {
@@ -62,15 +68,11 @@ void ClipboardWindow::readData(const AbstractData &data)
         switch (varData.type())
         {
         case QVariant::String:
-            QMessageBox::information(this, QString(), varData.toString());
+            emit textData(varData.toString());
             break;
 
         case QVariant::Image:
-            {
-                QLabel *label = new QLabel();
-                label->setPixmap(QPixmap::fromImage(varData.value<QImage>()));
-                label->show();
-            }
+            emit imageData(varData);
             break;
 
         default:

@@ -3,7 +3,7 @@ import QtQuick 1.0
 
 Rectangle {
 	id: button
-	width: 150; height: 75
+	width: 100; height: 50
 
 	Text {
 		id: buttonLabel
