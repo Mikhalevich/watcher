@@ -6,10 +6,11 @@ Rectangle {
 	width: 500
 	height: 250
 	anchors.fill: parent
-	color: "gray"
+        color: "white"
 	
 	// signals
 	signal getClipboard()
+        signal setClipboard(string text)
 	
 	// connections
 	Connections {
@@ -19,35 +20,54 @@ Rectangle {
 		}
 	}
 	
-	Button {
-		id: getClipboardButton
-		
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.top: parent.top
-		
-		label: "Get clipboard"
-		
-		onButtonClick: {
-			rect.getClipboard()
-		}
-	}
-	
-	Flickable {
+        // header buttons
+        Row {
+            id: header
+            anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            // get clipboard button
+            Button {
+                id: getClipboardButton
+                label: "Get clipboard"
+
+                onButtonClick: {
+                        rect.getClipboard()
+                }
+            }
+
+            // set clipboard button
+            Button {
+                id: setClipboardButton
+                label: "Set clipboard"
+
+                onButtonClick:
+                {
+                    setClipboard(clipboardText.text)
+                }
+            }
+        }
+
+        // text area
+        Flickable {
 		id: flickArea
-		anchors.left: parent.left
-		anchors.right: parent.right
-		anchors.bottom: parent.bottom
-		anchors.top: getClipboardButton.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.top: header.bottom
 			
-		contentWidth: clipboardText.width; contentHeight: clipboardText.height
+                contentWidth: clipboardText.width; contentHeight: clipboardText.height
 		flickableDirection: Flickable.VerticalFlick
-		clip: true
-		
-		TextEdit {
-			id: clipboardText
-			readOnly: true
-			
-			anchors.fill: parent
-		}
-	}
+                clip: true
+
+                TextEdit {
+                        id: clipboardText
+                        readOnly: false
+
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom*2
+                        anchors.top: parent.top
+                }
+        }
 }

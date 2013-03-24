@@ -35,9 +35,10 @@ signals:
 
 private slots:
     void clipboard();
+    void setClipboard(const QString& data);
 
     /* read data incoming from server */
-    virtual void readData(const AbstractData& data);
+    virtual void readData(const AbstractData& text);
 
     /* internationalization */
     virtual void retranslateUi();

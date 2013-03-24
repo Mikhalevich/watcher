@@ -4,6 +4,8 @@ import QtQuick 1.0
 Rectangle {
 	id: button
 	width: 100; height: 50
+        radius: 15
+        border.color: borderColor
 
 	Text {
 		id: buttonLabel
@@ -12,8 +14,8 @@ Rectangle {
 	}
 
 	property string label: "button label"
-	property color buttonColor: "lightblue"
-	property color onHoverColor: "gold"
+        property color buttonColor: "lightgray"
+        property color onHoverColor: "gold"
 	property color borderColor: "white"
 
 	signal buttonClick()
@@ -29,5 +31,5 @@ Rectangle {
 		onExited:  parent.border.color = borderColor
 	}
 	
-	color: buttonMouseArea.pressed ? Qt.darker(buttonColor, 1.5) : buttonColor
+        color: buttonMouseArea.pressed ? Qt.lighter(buttonColor, 1.5) : buttonColor
 }

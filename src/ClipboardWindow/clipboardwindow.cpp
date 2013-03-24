@@ -27,6 +27,7 @@ ClipboardWindow::ClipboardWindow(QWidget *parent) :
     // connections
     QObject *root = view->rootObject();
     connect(root, SIGNAL(getClipboard()), this, SLOT(clipboard()));
+    connect(root, SIGNAL(setClipboard(const QString&)), this, SLOT(setClipboard(const QString&)));
 
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->addWidget(view);
@@ -56,6 +57,12 @@ void ClipboardWindow::retranslateUi()
 void ClipboardWindow::clipboard()
 {
     getClientSocket().getClipboard();
+}
+
+void ClipboardWindow::setClipboard(const QString& text)
+{
+    // todo implement setClipboard
+    //getClientSocket().setClipboard();
 }
 
 void ClipboardWindow::readData(const AbstractData &data)
