@@ -34,6 +34,8 @@ private slots:
     void clipboardChanged();
 
 private:
+    Q_INVOKABLE void queuedSetClipboardData(const QVariant& data, ClipboardType type);
+
     ClipboardSingleton(QObject *parent = NULL);
     ClipboardSingleton(const ClipboardSingleton&);
     ClipboardSingleton& operator=(const ClipboardSingleton&);

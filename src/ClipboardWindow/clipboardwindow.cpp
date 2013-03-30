@@ -61,8 +61,7 @@ void ClipboardWindow::clipboard()
 
 void ClipboardWindow::setClipboard(const QString& text)
 {
-    // todo implement setClipboard
-    //getClientSocket().setClipboard();
+    getClientSocket().setClipboard(text);
 }
 
 void ClipboardWindow::readData(const AbstractData &data)

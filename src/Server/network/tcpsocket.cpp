@@ -45,6 +45,7 @@ namespace network
         queryFactory_.add<networkquery::GetSettingsQuery>(GETSETTINGS);
         queryFactory_.add<networkquery::SetSettingsQuery>(SETSETTINGS);
         queryFactory_.add<networkquery::ClipboardQuery>(GETCLIPBOARD);
+        queryFactory_.add<networkquery::SetClipdoardQuery>(SETCLIPBOARD);
     }
 
     void TcpSocket::readData()

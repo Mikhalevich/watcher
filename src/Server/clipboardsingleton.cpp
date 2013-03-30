@@ -14,6 +14,8 @@ ClipboardSingleton::ClipboardSingleton(QObject *parent /* = NULL */)
     : QObject(parent)
 {
     connect(QApplication::clipboard(), SIGNAL(dataChanged()), this, SLOT(clipboardChanged()));
+
+    qRegisterMetaType<ClipboardType>("ClipboardType");
 }
 
 void ClipboardSingleton::clipboardData(QVariant& data /* out */, ClipboardType& type /* out */)
@@ -42,6 +44,15 @@ void ClipboardSingleton::clipboardData(QVariant& data /* out */, ClipboardType& 
 
 void ClipboardSingleton::setClipboadData(const QVariant& data, ClipboardType type)
 {
+    // move to main thread
+    QMetaObject::invokeMethod(this, "queuedSetClipboardData", Qt::QueuedConnection, 
+        Q_ARG(QVariant, data), 
+        Q_ARG(ClipboardType, type));
+}
+
+void ClipboardSingleton::queuedSetClipboardData(const QVariant& data, ClipboardType type)
+{
+    // work with clipboard in main thread
     QClipboard *clipboard = QApplication::clipboard();
 
     switch (type)
@@ -88,9 +99,10 @@ void ClipboardSingleton::clipboardChanged()
 
     clipboardData(data, type);
 
-    if (type != NONE)
+    // do not store clipboard data to database
+    /*if (type != NONE)
     {
         database::databasequery::StoreClipboardQuery query(data, type);
         query.execute();
-    }
+    }*/
 }

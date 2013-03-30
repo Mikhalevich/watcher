@@ -14,6 +14,21 @@ namespace network
 
             virtual void execute();
         };
+
+        ///////////////////////////////////////////////////////////////
+
+        class SetClipdoardQuery : public INetworkQuery
+        {
+        public:
+            SetClipdoardQuery();
+
+            virtual void readData(TcpSocket *socket);
+            virtual void execute();
+
+        private:
+            QVariant clipboardData_;
+        };
+
     } // networkquery
 } // network
 

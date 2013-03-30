@@ -35,10 +35,8 @@ int main(int argc, char *argv[])
     // create get picture object in main thread
     PictureSingleton::instance();
 
-    // create clipboard thread
-    SingletonThread<ClipboardSingleton> clipboardThread;
-    clipboardThread.start();
-    clipboardThread.waitWhileInitialize();
+    // create clipboard in main thread
+    ClipboardSingleton::instance();
 
     // get setttings from database
     database::databasequery::GetSettingsQuery settingsQuerry;
@@ -75,11 +73,9 @@ int main(int argc, char *argv[])
 
     databaseThread.exit();
     pictureTimerThread.exit();
-    clipboardThread.exit();
 
     databaseThread.wait();
     pictureTimerThread.wait();
-    clipboardThread.wait();
 
     return retCode;
 }

@@ -216,6 +216,21 @@ namespace clientsocket
         out << operation_ << size_;
     }
 
+    void ClientTcpSocket::setClipboard(const QVariant& clipboardData)
+    {
+        operation_ = SETCLIPBOARD;
+
+        // determinate size
+        QByteArray bytes;
+        QDataStream sizeBuf(&bytes, QIODevice::WriteOnly);
+        sizeBuf << clipboardData;
+
+        size_ = bytes.size();
+
+        QDataStream out(this);
+        out << operation_ << size_ << clipboardData;
+    }
+
     void ClientTcpSocket::readData()
     {
         // endless cycle

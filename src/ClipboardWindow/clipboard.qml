@@ -46,6 +46,15 @@ Rectangle {
                     setClipboard(clipboardText.text)
                 }
             }
+
+            Button {
+                id: clearButton
+                label: "Clear"
+
+                onButtonClick: {
+                    clipboardText.text = ""
+                }
+            }
         }
 
         // text area

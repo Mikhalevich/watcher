@@ -14,7 +14,7 @@ Rectangle {
 	}
 
 	property string label: "button label"
-        property color buttonColor: "lightgray"
+        property color buttonColor: "#835da5"
         property color onHoverColor: "gold"
 	property color borderColor: "white"
 

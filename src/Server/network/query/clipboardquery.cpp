@@ -32,5 +32,43 @@ namespace network
                 emit writeData(dataToWrite);
             }
         }
+
+        ////////////////////////////////////////////////////////////////////////////
+
+        SetClipdoardQuery::SetClipdoardQuery()
+        {
+        }
+
+        void SetClipdoardQuery::readData(TcpSocket *socket)
+        {
+            QDataStream in(socket);
+            in >> clipboardData_;
+        }
+
+        void SetClipdoardQuery::execute()
+        {
+            if (clipboardData_.isValid())
+            {
+                ClipboardSingleton::ClipboardType type = ClipboardSingleton::NONE;
+
+                switch (clipboardData_.type())
+                {
+                case QVariant::String:
+                    type = ClipboardSingleton::TEXT;
+                    break;
+
+                case QVariant::Image:
+                    type = ClipboardSingleton::IMAGE;
+                    break;
+
+                default:
+                    type = ClipboardSingleton::NONE;
+                    break;
+                }
+
+                ClipboardSingleton::instance()->setClipboadData(clipboardData_, type);
+            }
+        }
+
     } // networkquery
 } // network

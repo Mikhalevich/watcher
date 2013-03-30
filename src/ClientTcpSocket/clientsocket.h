@@ -4,6 +4,7 @@
 #include <QDateTime>
 #include <QStringList>
 #include <QByteArray>
+#include <QVariant>
 
 namespace clientsocket
 {
@@ -42,6 +43,7 @@ namespace clientsocket
 
         // clipboard
         virtual void getClipboard() = 0;
+        virtual void setClipboard(const QVariant& clipdoardData) = 0;
     };
 }
 
