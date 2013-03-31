@@ -45,7 +45,8 @@ namespace global
 
             // clipboard
             GETCLIPBOARD,
-            SETCLIPBOARD
+            SETCLIPBOARD,
+            GETLASTCLIPBOARD
         };
 
         /* the end in transmittion */

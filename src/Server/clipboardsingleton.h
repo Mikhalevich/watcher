@@ -2,6 +2,8 @@
 #define CLIPBOARDSINGLETON_H
 
 #include <QObject>
+#include <QQueue>
+#include <QPair>
 
 class QVariant;
 
@@ -27,8 +29,12 @@ public:
         IMAGE
     };
 
+    typedef QPair<QVariant, ClipboardType> ClipboardPair;
+    typedef QQueue<ClipboardPair > ClipboardQueue;
+
     void clipboardData(QVariant& data /* out */, ClipboardType& type /* out */);
     void setClipboadData(const QVariant& data, ClipboardType type);
+    const ClipboardQueue& clipboardQueue() const;
 
 private slots:
     void clipboardChanged();
@@ -41,6 +47,8 @@ private:
     ClipboardSingleton& operator=(const ClipboardSingleton&);
 
     static ClipboardSingleton *instance_;
+
+    ClipboardQueue clipboardQueue_;
 };
 
 #endif // CLIPBOARDSINGLETON_H

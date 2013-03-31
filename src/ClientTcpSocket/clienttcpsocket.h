@@ -69,6 +69,7 @@ namespace clientsocket
         // clipboard
         void getClipboard();
         void setClipboard(const QVariant& clipboardData);
+        void getLastClipboard();
 
     signals:
         void sendData(const responcedata::AbstractData& data);

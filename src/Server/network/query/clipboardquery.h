@@ -29,6 +29,16 @@ namespace network
             QVariant clipboardData_;
         };
 
+        //////////////////////////////////////////////////////////////
+
+        class GetLastClipboardQuery : public INetworkQuery
+        {
+        public:
+            GetLastClipboardQuery();
+
+            virtual void execute();
+        };
+
     } // networkquery
 } // network
 

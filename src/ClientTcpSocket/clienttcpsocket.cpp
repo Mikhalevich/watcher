@@ -231,6 +231,15 @@ namespace clientsocket
         out << operation_ << size_ << clipboardData;
     }
 
+    void ClientTcpSocket::getLastClipboard()
+    {
+        operation_ = GETLASTCLIPBOARD;
+        size_ = 0;
+
+        QDataStream out(this);
+        out << operation_ << size_;
+    }
+
     void ClientTcpSocket::readData()
     {
         // endless cycle

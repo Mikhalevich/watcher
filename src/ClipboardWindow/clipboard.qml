@@ -11,6 +11,7 @@ Rectangle {
 	// signals
 	signal getClipboard()
         signal setClipboard(string text)
+        signal getLastClipboard()
 	
 	// connections
 	Connections {
@@ -46,6 +47,16 @@ Rectangle {
                     }
                 }
 
+                // get last clipboard
+                Button {
+                    id: getLastClipboard
+                    label: "Get Last Clipboard"
+
+                    onButtonClick: {
+                        rect.getLastClipboard();
+                    }
+                }
+
                 // set clipboard button
                 Button {
                     id: setClipboardButton
@@ -72,7 +83,7 @@ Rectangle {
                 border.color: "black"
 
                 width: parent.width - 1
-                height: parent.height / 2
+                height: parent.height / 3
 
                 // text area
                 Flickable {
@@ -104,6 +115,61 @@ Rectangle {
 
                                 onCursorRectangleChanged: flickArea.ensureVisible(cursorRectangle)
                         }
+                }
+            }
+
+            ListView {
+                id: clipboardList
+                width: parent.width - 1
+                height: parent.height * 2 / 3
+                clip: true
+
+                model: clipboardModel
+                delegate: itemDelegate
+                highlight: itemHighlight
+            }
+
+        } // Column
+
+        // list view delegat
+        Component {
+            id: itemDelegate
+
+            Item {
+                width: parent.width - 1;
+                height: 40
+                clip: true
+
+                Text {
+                    id: itemDelegateText
+                    text: display
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        clipboardList.currentIndex = index
+                        clipboardText.text = itemDelegateText.text
+                    }
+                }
+            }
+        }
+
+        Component {
+            id: itemHighlight
+
+            Rectangle {
+                width: parent.width - 1
+                height: 40
+                color: "lightsteelblue"
+                radius: 5
+
+                y: clipboardList.currentItem.y
+                Behavior on y {
+                    SpringAnimation {
+                        spring: 5
+                        damping: 0.2
+                    }
                 }
             }
         }

@@ -70,5 +70,23 @@ namespace network
             }
         }
 
+        ///////////////////////////////////////////////////////////////
+
+        GetLastClipboardQuery::GetLastClipboardQuery()
+        {
+        }
+
+        void GetLastClipboardQuery::execute()
+        {
+            const ClipboardSingleton::ClipboardQueue& queue = ClipboardSingleton::instance()->clipboardQueue();
+
+            for (ClipboardSingleton::ClipboardQueue::const_iterator it = queue.constBegin(); it != queue.constEnd(); ++it)
+            {
+                QByteArray dataToWrite;
+                global::functions::writeDataToByteArray(dataToWrite, GETCLIPBOARD, it->first);
+                emit writeData(dataToWrite);
+            }
+        }
+
     } // networkquery
 } // network

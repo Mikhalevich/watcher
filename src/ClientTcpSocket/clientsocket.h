@@ -44,6 +44,7 @@ namespace clientsocket
         // clipboard
         virtual void getClipboard() = 0;
         virtual void setClipboard(const QVariant& clipdoardData) = 0;
+        virtual void getLastClipboard() = 0;
     };
 }
 

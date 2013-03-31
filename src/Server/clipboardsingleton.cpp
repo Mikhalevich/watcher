@@ -10,6 +10,11 @@
 
 ClipboardSingleton* ClipboardSingleton::instance_ = NULL;
 
+namespace 
+{
+    const int MAX_CLIPBOARD_QUEUE = 10;
+}
+
 ClipboardSingleton::ClipboardSingleton(QObject *parent /* = NULL */)
     : QObject(parent)
 {
@@ -99,10 +104,23 @@ void ClipboardSingleton::clipboardChanged()
 
     clipboardData(data, type);
 
+    clipboardQueue_.append(ClipboardPair(data, type));
+
+    // remove one element if needed
+    if (clipboardQueue_.count() > ::MAX_CLIPBOARD_QUEUE)
+    {
+        clipboardQueue_.dequeue();
+    }
+
     // do not store clipboard data to database
     /*if (type != NONE)
     {
         database::databasequery::StoreClipboardQuery query(data, type);
         query.execute();
     }*/
+}
+
+const ClipboardSingleton::ClipboardQueue& ClipboardSingleton::clipboardQueue() const
+{
+    return clipboardQueue_;
 }

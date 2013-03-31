@@ -12,6 +12,56 @@
 
 #include "clipboardwindow.h"
 
+namespace clipboardmodel
+{
+    ClipboardModel::ClipboardModel(QObject* parent /* = 0 */)
+        : QAbstractListModel(parent)
+    {
+    }
+
+    int ClipboardModel::rowCount(const QModelIndex& parentIndex /* = QModelIndex() */) const
+    {
+        return clipboardData_.count();
+    }
+
+    QVariant ClipboardModel::data(const QModelIndex& index, int role) const
+    {
+        if (!index.isValid())
+        {
+            return QVariant();
+        }
+
+        switch (role)
+        {
+        case Qt::DisplayRole:
+            return clipboardData_.at(index.row());
+            break;
+
+        default:
+            // nothing
+            break;
+        }
+
+        return QVariant();
+    }
+
+    void ClipboardModel::addClipboardData(const ClipboardElement& element)
+    {
+        beginInsertRows(QModelIndex(), clipboardData_.count(), clipboardData_.count());
+        clipboardData_.push_back(element);
+        endInsertRows();
+    }
+
+    void ClipboardModel::clearClipboardData()
+    {
+        clipboardData_.clear();
+        reset();
+    }
+
+} // clipboardmodel
+
+/////////////////////////////////////////////////////////////////////////
+
 ClipboardWindow::ClipboardWindow(QWidget *parent) :
     BaseWidget(parent)
 {   
@@ -20,14 +70,19 @@ ClipboardWindow::ClipboardWindow(QWidget *parent) :
 
     QDeclarativeView *view = new QDeclarativeView(this);
     view->setResizeMode(QDeclarativeView::SizeRootObjectToView);
-    view->setSource(QUrl("qrc:/qml/clipboard.qml"));
+    // NEEDED FOR QUICK MODIFYING QML FILES!!!!!!!!!!!
+    // REMOVE IT AFTER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //view->setSource(QUrl("qrc:/qml/clipboard.qml"));
+    view->setSource(QUrl("clipboard.qml"));
 
     view->rootContext()->setContextProperty("clipboardWindow", this);
+    view->rootContext()->setContextProperty("clipboardModel", &clipboardModel_);
 
     // connections
     QObject *root = view->rootObject();
     connect(root, SIGNAL(getClipboard()), this, SLOT(clipboard()));
     connect(root, SIGNAL(setClipboard(const QString&)), this, SLOT(setClipboard(const QString&)));
+    connect(root, SIGNAL(getLastClipboard()), this, SLOT(lastClipboard()));
 
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->addWidget(view);
@@ -64,6 +119,12 @@ void ClipboardWindow::setClipboard(const QString& text)
     getClientSocket().setClipboard(text);
 }
 
+void ClipboardWindow::lastClipboard()
+{
+    clipboardModel_.clearClipboardData();
+    getClientSocket().getLastClipboard();
+}
+
 void ClipboardWindow::readData(const AbstractData &data)
 {
     if (data.type() == GETCLIPBOARD)
@@ -75,10 +136,12 @@ void ClipboardWindow::readData(const AbstractData &data)
         {
         case QVariant::String:
             emit textData(varData.toString());
+            clipboardModel_.addClipboardData(varData);
             break;
 
         case QVariant::Image:
             emit imageData(varData);
+            clipboardModel_.addClipboardData(varData);
             break;
 
         default:
