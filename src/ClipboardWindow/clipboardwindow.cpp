@@ -31,11 +31,23 @@ namespace clipboardmodel
             return QVariant();
         }
 
+        ClipboardElement element = clipboardData_.at(index.row());
+
         switch (role)
         {
         case Qt::DisplayRole:
-            return clipboardData_.at(index.row());
-            break;
+            switch (element.type())
+            {
+            case QVariant::Image:
+                element = QLatin1String("#Image#");
+                break;
+
+            default:
+                // nothing
+                break;
+            }
+
+            return element;
 
         default:
             // nothing
@@ -135,8 +147,11 @@ void ClipboardWindow::readData(const AbstractData &data)
         switch (varData.type())
         {
         case QVariant::String:
-            emit textData(varData.toString());
-            clipboardModel_.addClipboardData(varData);
+            if (!varData.toString().isEmpty())
+            {
+                emit textData(varData.toString());
+                clipboardModel_.addClipboardData(varData);
+            }
             break;
 
         case QVariant::Image:
