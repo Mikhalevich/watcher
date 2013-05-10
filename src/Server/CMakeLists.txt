@@ -117,21 +117,29 @@ set(TS_FILES ) #nofile_ru.ts)
 
 # Python libs
 find_package(PythonLibs REQUIRED)
-# Qt
-find_package(Qt4 REQUIRED 
-	QtCore 
-	QtGui 
-	QtNetwork 
-	QtSql)
-	
-include(${QT_USE_FILE})
+
+# Qt4
+#find_package(Qt4 REQUIRED 
+#	QtCore 
+#	QtGui 
+#	QtNetwork 
+#	QtSql)
+
+#include(${QT_USE_FILE})
+
+# Qt5
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Gui REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Network REQUIRED)
+find_package(Qt5Sql REQUIRED)
 
 # removes console from build	
 ADD_DEFINITIONS(-DQT_DLL)
 
-qt4_wrap_ui(UI_HEADERS ${UI_LIST})
-qt4_wrap_cpp(MOC_SRCS ${MOC_HEADER_LIST})
-qt4_add_resources(RCC_SRCS ${RCC_LIST})
+qt5_wrap_ui(UI_HEADERS ${UI_LIST})
+qt5_wrap_cpp(MOC_SRCS ${MOC_HEADER_LIST})
+qt5_add_resources(RCC_SRCS ${RCC_LIST})
 
 source_group(main\\headers FILES ${MAIN_HEADER_LIST})
 source_group(main\\sources FILES ${MAIN_SOURCE_LIST})
@@ -161,8 +169,14 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
 	"${CMAKE_CURRENT_SOURCE_DIR}/database")
 
 add_executable(${ProjectServer} WIN32 ${SOURCE_LIST} ${MOC_HEADER_LIST} ${MOC_SRCS} ${UI_HEADERS} ${RCC_SRCS} ${QM_FILES})
-target_link_libraries(${ProjectServer} ${QT_LIBRARIES} ${PYTHON_LIBRARIES} ${LIBRARY_DEPENDENCIES})
-add_dependencies(${ProjectServer} ${LIBRARY_DEPENDENCIES})
+
+# Qt4
+#target_link_libraries(${ProjectServer} ${QT_LIBRARIES} ${PYTHON_LIBRARIES} ${LIBRARY_DEPENDENCIES})
+#add_dependencies(${ProjectServer} ${LIBRARY_DEPENDENCIES})
+
+# Qt5
+target_link_libraries(${ProjectServer} ${PYTHON_LIBRARIES} ${LIBRARY_DEPENDENCIES})
+qt5_use_modules(${ProjectServer} Core Gui Widgets Network Sql)
 
 #add_custom_target(translations DEPENDS ${QM_FILES})
 #qt4_add_translation(${QM_FILES} ${SOURCES} ${MOC_SRCS} ${UI_HEADERS} ${TS_FILES}) 

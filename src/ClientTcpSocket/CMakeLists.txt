@@ -38,10 +38,12 @@ set(SOURCE_QUERY_LIST
 	querry/settingsquery.cpp
 	)
 
-find_package(Qt4 REQUIRED QtCore QtGui QtNetwork)
-include(${QT_USE_FILE})
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Gui REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Network REQUIRED)
 
-qt4_wrap_cpp(SOURCE_MOC_LIST ${HEADER_MOC_LIST})
+qt5_wrap_cpp(SOURCE_MOC_LIST ${HEADER_MOC_LIST})
 
 source_group(main\\headers FILES ${HEADER_MAIN_LIST})
 source_group(main\\sources FILES ${SOURCE_MAIN_LIST})
@@ -54,5 +56,6 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
 	"${CMAKE_CURRENT_SOURCE_DIR}/../Server/helper/")
 
 add_library(${ProjectClientSocket} STATIC
-	${HEADER_MAIN_LIST} ${HEADER_QUERY_LIST} ${SOURCE_MAIN_LIST} ${SOURCE_QUERY_LIST} ${SOURCE_MOC_LIST})	
-target_link_libraries(${ProjectClientSocket} ${QT_LIBRARIES})
+	${HEADER_MAIN_LIST} ${HEADER_QUERY_LIST} ${SOURCE_MAIN_LIST} ${SOURCE_QUERY_LIST} ${SOURCE_MOC_LIST})
+
+qt5_use_modules(${ProjectClientSocket} Core Gui Widgets Network)

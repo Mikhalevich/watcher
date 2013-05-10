@@ -19,7 +19,7 @@ public:
     {
         while (true)
         {
-            if (initialize_ == 1)
+            if (initialize_.load() == 1)
             {
                 return;
             }

@@ -1,7 +1,7 @@
 
 set(ProjectName watcher)
 project(${ProjectName})
-cmake_minimum_required(VERSION 2.8.2)
+cmake_minimum_required(VERSION 2.8.8)
 
 set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type(Debug, Release)" FORCE)
 
@@ -49,6 +49,6 @@ set(LANGUAGE_PATH "${CMAKE_SOURCE_DIR}/language")
 add_subdirectory(Server)
 add_subdirectory(Client)
 add_subdirectory(ClientTcpSocket)
-add_subdirectory(SettingsWindow)
-#ADD_SUBDIRECTORY(PluginExample)
-add_subdirectory(PictureWindow)
+#add_subdirectory(SettingsWindow)
+# ADD_SUBDIRECTORY(PluginExample)
+#add_subdirectory(PictureWindow)
