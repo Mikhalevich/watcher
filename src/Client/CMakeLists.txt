@@ -46,10 +46,17 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}
 	"${CMAKE_CURRENT_SOURCE_DIR}/../ClientTcpSocket/"
 	"${CMAKE_CURRENT_SOURCE_DIR}/../Server/helper/")
-	
+
 set(LIBRARY_DEPENDENCIES
-	${QT_QTMAIN_LIBRARY} # removes console from build
-	ClientTcpSocket)
+		ClientTcpSocket
+	)
+	
+if (WIN32)
+	# removes console from build
+	set(LIBRARY_DEPENDENCIES ${LIBRARY_DEPENDENCIES} 
+		${Qt5Core_QTMAIN_LIBRARIES}
+	)
+endif(WIN32)
 	
 link_directories(${CMAKE_CURRENT_BINARY_DIR})
 

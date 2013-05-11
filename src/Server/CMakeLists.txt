@@ -158,8 +158,15 @@ source_group(moc FILES ${MOC_SRCS})
 link_directories(${CMAKE_CURRENT_BINARY_DIR})
 	
 set(LIBRARY_DEPENDENCIES 
-	${QT_QTMAIN_LIBRARY} # removes console from build
+		${PYTHON_LIBRARIES}
 	)
+	
+if (WIN32)
+	# removes console from build
+	set(LIBRARY_DEPENDENCIES ${LIBRARY_DEPENDENCIES} 
+		${Qt5Core_QTMAIN_LIBRARIES}
+	)
+endif(WIN32)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}
@@ -175,7 +182,7 @@ add_executable(${ProjectServer} WIN32 ${SOURCE_LIST} ${MOC_HEADER_LIST} ${MOC_SR
 #add_dependencies(${ProjectServer} ${LIBRARY_DEPENDENCIES})
 
 # Qt5
-target_link_libraries(${ProjectServer} ${PYTHON_LIBRARIES} ${LIBRARY_DEPENDENCIES})
+target_link_libraries(${ProjectServer} ${LIBRARY_DEPENDENCIES})
 qt5_use_modules(${ProjectServer} Core Gui Widgets Network Sql)
 
 #add_custom_target(translations DEPENDS ${QM_FILES})
