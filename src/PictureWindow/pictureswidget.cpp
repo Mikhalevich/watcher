@@ -50,14 +50,17 @@ void PicturesWidget::addPicture(QPixmap &pixmap, const QString& text)
 
 void PicturesWidget::clearPictures()
 {
-    for (QMap<QObject*, QPixmap>::iterator it = pictures_.begin(); it != pictures_.end(); ++it)
+    QMap<QObject*, QPixmap>::iterator it = pictures_.begin();
+    while (it != pictures_.end())
     {
+        QMap<QObject*, QPixmap>::iterator current = it++;
+
         // delete label
-        QObject *obj = it.key();
+        QObject *obj = current.key();
         delete obj;
 
         // remove iterator from map
-        pictures_.erase(it);
+        pictures_.erase(current);
     }
 
     currentPicture_ = pictures_.end();
