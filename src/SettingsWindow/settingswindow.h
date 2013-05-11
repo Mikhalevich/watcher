@@ -12,6 +12,7 @@ class SettingsWindow : public BaseWidget
 {
     Q_OBJECT
     Q_INTERFACES(BaseWidget)
+    Q_PLUGIN_METADATA(IID BaseWidget_IID /* FILE "SettingsWindow.json" */)
 
 public:
 

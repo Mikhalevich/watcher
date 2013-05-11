@@ -8,6 +8,8 @@
 
 using namespace clientsocket::responcedata;
 
+#define BaseWidget_IID "com.michael.PluginExample.BaseWidget"
+
 class BaseWidget : public clientsocket::AbstractWidget
 {
     Q_OBJECT
@@ -47,6 +49,6 @@ public slots:
     virtual void retranslateUi() = 0;
 };
 
-Q_DECLARE_INTERFACE(BaseWidget, "com.michael.PluginExample.BaseWidget/1.0")
+Q_DECLARE_INTERFACE(BaseWidget, BaseWidget_IID)
 
 #endif // BASEWIDGET_H

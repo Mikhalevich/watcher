@@ -254,8 +254,3 @@ void SettingsWindow::readData(const AbstractData &data)
         populateSettings(settingsData);
     }
 }
-
-/* export plugin */
-/* first parameter plugin name - see TARGET in .pro file */
-/* second parameter plugin class - see class name in .h file */
-Q_EXPORT_PLUGIN2(SettingsWindow, SettingsWindow)
