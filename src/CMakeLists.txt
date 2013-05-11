@@ -41,6 +41,15 @@ function(setOutputPluginDirectory PROJECT_NAME)
 	endif(WIN32)
 endfunction(setOutputPluginDirectory)
 
+function(pluginDefinitions)
+	add_definitions(-DQT_PLUGIN)
+	add_definitions(-DQT_SHARED)
+	
+	if (CMAKE_BUILD_TYPE STREQUAL "Release")
+		add_definitions(-DQT_NO_DEBUG)
+	endif(CMAKE_BUILD_TYPE STREQUAL "Release")
+endfunction(pluginDefinitions)
+
 # directory where save *.ts and *.qm files
 set(LANGUAGE_PATH "${CMAKE_SOURCE_DIR}/language")
 
