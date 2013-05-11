@@ -9,7 +9,7 @@ namespace network
     {
     }
 
-    void TcpServer::incomingConnection(int socketDescriptor)
+    void TcpServer::incomingConnection(qintptr socketDescriptor)
     {
         SocketThread *thread = new SocketThread(socketDescriptor, this);
         connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));

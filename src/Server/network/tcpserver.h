@@ -19,7 +19,7 @@ namespace network
         TcpServer();
 
     protected:
-        virtual void incomingConnection (int socketDescriptor);
+        virtual void incomingConnection (qintptr socketDescriptor);
     };
 } // network
 

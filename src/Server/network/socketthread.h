@@ -14,7 +14,7 @@ namespace network
         Q_OBJECT
 
     public:
-        SocketThread(int socketDescriptor, QObject *parent = 0)
+        SocketThread(qintptr socketDescriptor, QObject *parent = 0)
             : QThread(parent)
             , socketDescriptor_(socketDescriptor)
         {
@@ -33,7 +33,7 @@ namespace network
             exec();
         }
 
-        int socketDescriptor_;
+        qintptr socketDescriptor_;
     };
 } // network
 
