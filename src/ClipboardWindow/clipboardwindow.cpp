@@ -83,19 +83,21 @@ ClipboardWindow::ClipboardWindow(QWidget *parent) :
 
     QQuickView *view = new QQuickView();
     view->setResizeMode(QQuickView::SizeRootObjectToView);
+
+    view->rootContext()->setContextProperty("clipboardWindow", this);
+    view->rootContext()->setContextProperty("clipboardModel", &clipboardModel_);
+
     // NEEDED FOR QUICK MODIFYING QML FILES!!!!!!!!!!!
     // REMOVE IT AFTER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //view->setSource(QUrl("qrc:/qml/clipboard.qml"));
     view->setSource(QUrl("clipboard.qml"));
-
-    view->rootContext()->setContextProperty("clipboardWindow", this);
-    view->rootContext()->setContextProperty("clipboardModel", &clipboardModel_);
 
     // connections
     QObject *root = view->rootObject();
     connect(root, SIGNAL(getClipboard()), this, SLOT(clipboard()));
     connect(root, SIGNAL(setClipboard(const QString&)), this, SLOT(setClipboard(const QString&)));
     connect(root, SIGNAL(getLastClipboard()), this, SLOT(lastClipboard()));
+    connect(root, SIGNAL(clearModel()), this, SLOT(clearModel()));
 
     // fix in 5.1
     /*QWidget *widget = QWidget::createWindowConteiner(view);
@@ -141,6 +143,11 @@ void ClipboardWindow::lastClipboard()
 {
     clipboardModel_.clearClipboardData();
     getClientSocket().getLastClipboard();
+}
+
+void ClipboardWindow::clearModel()
+{
+    clipboardModel_.clearClipboardData();
 }
 
 void ClipboardWindow::readData(const AbstractData &data)

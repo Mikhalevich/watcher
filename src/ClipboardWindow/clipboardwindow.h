@@ -64,6 +64,7 @@ private slots:
     void clipboard();
     void setClipboard(const QString& data);
     void lastClipboard();
+    void clearModel();
 
     /* read data incoming from server */
     virtual void readData(const AbstractData& text);
