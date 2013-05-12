@@ -4,8 +4,7 @@
 #include <QObject>
 #include <QQueue>
 #include <QPair>
-
-class QVariant;
+#include <QVariant>
 
 class ClipboardSingleton : public QObject
 {

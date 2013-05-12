@@ -2,7 +2,6 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QMimeData>
-#include <QVariant>
 #include <QImage>
 
 #include "clipboardsingleton.h"
