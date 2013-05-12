@@ -3,6 +3,8 @@
 
 #include "global.h"
 
+#include <QVariant>
+
 namespace clientsocket
 {
     namespace responcedata
@@ -182,6 +184,28 @@ namespace clientsocket
             qint32 port_;
             qint8 startupMode_;
             qint8 trayIcon_;
+        };
+
+        class ClipboardData : public AbstractData
+        {
+        public:
+            ClipboardData(const QVariant& clipboardData)
+                : clipboardData_(clipboardData)
+            {
+            }
+
+            virtual Operation type() const
+            {
+                return GETCLIPBOARD;
+            }
+
+            const QVariant& clipboardData() const
+            {
+                return clipboardData_;
+            }
+
+        private:
+            QVariant clipboardData_;
         };
     } // responcedata
 } // clientsocket

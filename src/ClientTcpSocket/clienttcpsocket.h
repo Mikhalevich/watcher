@@ -66,6 +66,11 @@ namespace clientsocket
         void getSettings();
         void setSettings(qint32 port, qint8 startupMode, qint8 trayIcon);
 
+        // clipboard
+        void getClipboard();
+        void setClipboard(const QVariant& clipboardData);
+        void getLastClipboard();
+
     signals:
         void sendData(const responcedata::AbstractData& data);
         void sendAutorization(bool success, const QString& error = QString());

@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>resources/icons/scissors_32x32.png</file>
+    </qresource>
+    <qresource prefix="/qml">
+        <file>clipboard.qml</file>
+        <file>Button.qml</file>
+    </qresource>
+</RCC>

@@ -41,7 +41,12 @@ namespace global
 
             // settings
             GETSETTINGS,
-            SETSETTINGS
+            SETSETTINGS,
+
+            // clipboard
+            GETCLIPBOARD,
+            SETCLIPBOARD,
+            GETLASTCLIPBOARD
         };
 
         /* the end in transmittion */

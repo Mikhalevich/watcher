@@ -4,6 +4,7 @@
 #include <QDateTime>
 #include <QStringList>
 #include <QByteArray>
+#include <QVariant>
 
 namespace clientsocket
 {
@@ -39,6 +40,11 @@ namespace clientsocket
         // settings
         virtual void getSettings() = 0;
         virtual void setSettings(qint32 port, qint8 sturtupMode, qint8 trayIcon) = 0;
+
+        // clipboard
+        virtual void getClipboard() = 0;
+        virtual void setClipboard(const QVariant& clipdoardData) = 0;
+        virtual void getLastClipboard() = 0;
     };
 }
 

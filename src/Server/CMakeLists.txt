@@ -21,6 +21,7 @@ set(NETWORK_QUERY_HEADER_LIST network/query/networkquery.h
     network/query/getpicturepropertiesquery.h
     network/query/timedpicturesquery.h
 	network/query/settingsquery.h
+	network/query/clipboardquery.h
 	)
 	
 set(GUI_HEADER_LIST gui/traysettings.h
@@ -43,6 +44,7 @@ set(DATABASE_QUERY_HEADER_LIST database/query/abstractdatabasequery.h
 	database/query/mailquery.h
 	database/query/picturepropertiesquery.h
 	database/query/settingsquery.h
+	database/query/clipboardquery.h
 	)
 	
 set(MAIN_HEADER_LIST picturesingleton.h
@@ -50,6 +52,7 @@ set(MAIN_HEADER_LIST picturesingleton.h
     singletonthread.h
     commonfunctions.h
     helper/objectfactory.h
+	clipboardsingleton.h
 	)
 
 set(MOC_HEADER_LIST ${NETWORK_HEADER_LIST}
@@ -75,6 +78,7 @@ set(NETWORK_QUERY_SOURCE_LIST network/query/picturequery.cpp
     network/query/getpicturepropertiesquery.cpp 
     network/query/timedpicturesquery.cpp
 	network/query/settingsquery.cpp
+	network/query/clipboardquery.cpp
 	)
 	
 set(GUI_SOURCE_LIST gui/traysettings.cpp 
@@ -94,11 +98,13 @@ set(DATABASE_QUERY_SOURCE_LIST database/query/userquery.cpp
 	database/query/mailquery.cpp
 	database/query/picturepropertiesquery.cpp
 	database/query/settingsquery.cpp
+	database/query/clipboardquery.cpp
 	)
 	
 set(MAIN_SOURCE_LIST main.cpp     
     picturetimer.cpp   
     commonfunctions.cpp 
+	clipboardsingleton.cpp
 	)
 
 set(SOURCE_LIST ${NETWORK_SOURCE_LIST}

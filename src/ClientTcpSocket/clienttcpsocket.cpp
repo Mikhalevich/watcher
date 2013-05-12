@@ -10,6 +10,7 @@
 #include "querry/executionreportquerry.h"
 #include "querry/getpicturepropertiesquerry.h"
 #include "querry/settingsquery.h"
+#include "querry/clipboardquery.h"
 
 namespace clientsocket
 {
@@ -54,6 +55,7 @@ namespace clientsocket
         querryFactory_.add<networkquery::ExecutionReportQuerry>(EXECUTIONREPORT);
         querryFactory_.add<networkquery::GetPicturePropertiesQuerry>(GETPICTURETIMER);
         querryFactory_.add<networkquery::GetSettingsQuery>(GETSETTINGS);
+        querryFactory_.add<networkquery::ClipboardQuery>(GETCLIPBOARD);
     }
 
     bool ClientTcpSocket::isConnected()
@@ -203,6 +205,39 @@ namespace clientsocket
         QDataStream out(this);
         out << operation_ << size_
             << (qint32)port << qint8(startupMode) << qint8(trayIcon);
+    }
+
+    void ClientTcpSocket::getClipboard()
+    {
+        operation_ = GETCLIPBOARD;
+        size_ = 0;
+
+        QDataStream out(this);
+        out << operation_ << size_;
+    }
+
+    void ClientTcpSocket::setClipboard(const QVariant& clipboardData)
+    {
+        operation_ = SETCLIPBOARD;
+
+        // determinate size
+        QByteArray bytes;
+        QDataStream sizeBuf(&bytes, QIODevice::WriteOnly);
+        sizeBuf << clipboardData;
+
+        size_ = bytes.size();
+
+        QDataStream out(this);
+        out << operation_ << size_ << clipboardData;
+    }
+
+    void ClientTcpSocket::getLastClipboard()
+    {
+        operation_ = GETLASTCLIPBOARD;
+        size_ = 0;
+
+        QDataStream out(this);
+        out << operation_ << size_;
     }
 
     void ClientTcpSocket::readData()
