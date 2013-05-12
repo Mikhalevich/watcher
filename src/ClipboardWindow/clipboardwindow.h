@@ -2,6 +2,7 @@
 #define PLUGINEXAMPLE_H
 
 #include <QWidget>
+#include <QtPlugin>
 #include <QAbstractListModel>
 
 #include "basewidget.h"
@@ -34,6 +35,7 @@ class ClipboardWindow : public BaseWidget
 {
     Q_OBJECT
     Q_INTERFACES(BaseWidget)
+    Q_PLUGIN_METADATA(IID BaseWidget_IID)
 
 public:
 

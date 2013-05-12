@@ -419,7 +419,7 @@ namespace database
 
             ClipboardSingleton::ClipboardType clipboardType() const
             {
-                Q_ASSERT(type_ != ClipboardSingleton::NONE);
+                Q_ASSERT(clipboardType_ != ClipboardSingleton::NONE);
                 return clipboardType_;
             }
 

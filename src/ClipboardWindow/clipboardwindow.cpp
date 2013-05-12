@@ -1,14 +1,14 @@
 
-#include <QtPlugin>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QApplication>
-#include <QDeclarativeView>
+#include <QQuickView>
 #include <QUrl>
-#include <QGraphicsObject>
-#include <QDeclarativeContext>
+#include <QQuickItem>
+#include <QQmlContext>
+#include <QWindow>
 
 #include "clipboardwindow.h"
 
@@ -66,8 +66,9 @@ namespace clipboardmodel
 
     void ClipboardModel::clearClipboardData()
     {
+        beginResetModel();
         clipboardData_.clear();
-        reset();
+        endResetModel();
     }
 
 } // clipboardmodel
@@ -80,8 +81,8 @@ ClipboardWindow::ClipboardWindow(QWidget *parent) :
     /* retranslte all visible strings */
     retranslateUi();
 
-    QDeclarativeView *view = new QDeclarativeView(this);
-    view->setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    QQuickView *view = new QQuickView();
+    view->setResizeMode(QQuickView::SizeRootObjectToView);
     // NEEDED FOR QUICK MODIFYING QML FILES!!!!!!!!!!!
     // REMOVE IT AFTER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //view->setSource(QUrl("qrc:/qml/clipboard.qml"));
@@ -96,10 +97,15 @@ ClipboardWindow::ClipboardWindow(QWidget *parent) :
     connect(root, SIGNAL(setClipboard(const QString&)), this, SLOT(setClipboard(const QString&)));
     connect(root, SIGNAL(getLastClipboard()), this, SLOT(lastClipboard()));
 
+    // fix in 5.1
+    /*QWidget *widget = QWidget::createWindowConteiner(view);
     QHBoxLayout *layout = new QHBoxLayout(this);
-    layout->addWidget(view);
+    layout->addWidget(widget);
     
     setLayout(layout);
+    */
+    // before Qt5.1 use this spike
+    view->show();
 }
 
 QIcon ClipboardWindow::icon() const
@@ -165,8 +171,3 @@ void ClipboardWindow::readData(const AbstractData &data)
         }
     }
 }
-
-/* export plugin */
-/* first parameter plugin name - see TARGET in .pro file */
-/* second parameter plugin class - see class name in .h file */
-Q_EXPORT_PLUGIN2(ClipboardWindow, ClipboardWindow)
