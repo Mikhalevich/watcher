@@ -3,12 +3,12 @@ set(ProjectClipboard ClipboardWindow)
 project(${ProjectClipboard})
 
 set(HEADER_LIST )
-	
+
 set(SOURCE_LIST clipboardwindow.cpp
-    )
+    clipboardmodel.cpp)
 
 set(HEADER_MOC_LIST clipboardwindow.h
-	)
+    clipboardmodel.h)
 
 set(RCC_LIST clipboardwindow.qrc)
 
@@ -28,17 +28,16 @@ find_package(Qt5Quick REQUIRED)
 pluginDefinitions()
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}
-	${CMAKE_CURRENT_SOURCE_DIR}
-	"${CMAKE_CURRENT_SOURCE_DIR}/../ClientTcpSocket/"
-	)
-	
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    "${CMAKE_CURRENT_SOURCE_DIR}/../ClientTcpSocket/")
+
 qt5_wrap_cpp(SOURCE_MOC_LIST ${HEADER_MOC_LIST})
 qt5_add_resources(RCC_SRCS ${RCC_LIST})
 qt5_create_translation(QM_LIST ${TS_LIST} ${HEADER_MOC_LIST} ${SOURCE_LIST})
-	
+
 set(LIBRARY_DEPENDENCIES
-	ClientTcpSocket)
-	
+    ClientTcpSocket)
+
 link_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_library(${ProjectClipboard} SHARED ${HEADER_LIST} ${SOURCE_LIST} 

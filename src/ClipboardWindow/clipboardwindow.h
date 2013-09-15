@@ -3,33 +3,12 @@
 
 #include <QWidget>
 #include <QtPlugin>
-#include <QAbstractListModel>
+#include <QScopedPointer>
 
 #include "basewidget.h"
+#include "clipboardmodel.h"
 
-namespace clipboardmodel 
-{
-    class ClipboardModel : public QAbstractListModel
-    {
-        Q_OBJECT
-        
-    public:
-        ClipboardModel(QObject* parent = 0);
-
-        typedef QVariant ClipboardElement;
-        typedef QVector<ClipboardElement> ClipboardData;
-
-        void addClipboardData(const ClipboardElement& element);
-        void clearClipboardData();
-
-        virtual int rowCount(const QModelIndex& parentIndex = QModelIndex()) const;
-        virtual QVariant data(const QModelIndex& index, int role) const;
-
-    private:
-        ClipboardData clipboardData_;
-    };
-
-} // clipboardmodel
+class ClipboardWindowPrivate;
 
 class ClipboardWindow : public BaseWidget
 {
@@ -38,8 +17,8 @@ class ClipboardWindow : public BaseWidget
     Q_PLUGIN_METADATA(IID BaseWidget_IID)
 
 public:
-
     explicit ClipboardWindow(QWidget *parent = 0);
+    virtual ~ClipboardWindow();
 
     /* create object of itself */
     virtual BaseWidget* clone() const
@@ -73,7 +52,7 @@ private slots:
     virtual void retranslateUi();
 
 private:
-    clipboardmodel::ClipboardModel clipboardModel_;
+    QScopedPointer<ClipboardWindowPrivate> d_ptr;
 };
 
 #endif // PLUGINEXAMPLE_H
