@@ -87,10 +87,7 @@ ClipboardWindow::ClipboardWindow(QWidget *parent) :
     view->rootContext()->setContextProperty("clipboardWindow", this);
     view->rootContext()->setContextProperty("clipboardModel", &clipboardModel_);
 
-    // NEEDED FOR QUICK MODIFYING QML FILES!!!!!!!!!!!
-    // REMOVE IT AFTER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //view->setSource(QUrl("qrc:/qml/clipboard.qml"));
-    view->setSource(QUrl("clipboard.qml"));
+    view->setSource(QUrl("qrc:/qml/clipboard.qml"));
 
     // connections
     QObject *root = view->rootObject();
@@ -99,15 +96,17 @@ ClipboardWindow::ClipboardWindow(QWidget *parent) :
     connect(root, SIGNAL(getLastClipboard()), this, SLOT(lastClipboard()));
     connect(root, SIGNAL(clearModel()), this, SLOT(clearModel()));
 
+#if QT_VERSION >= 0x050100
     // fix in 5.1
-    /*QWidget *widget = QWidget::createWindowConteiner(view);
+    QWidget *widget = QWidget::createWindowContainer(view);
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->addWidget(widget);
     
     setLayout(layout);
-    */
+#else
     // before Qt5.1 use this spike
     view->show();
+#endif // QT_VERSION >= 0x050100
 }
 
 QIcon ClipboardWindow::icon() const
