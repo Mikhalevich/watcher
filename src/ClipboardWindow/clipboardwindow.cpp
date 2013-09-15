@@ -11,15 +11,14 @@
 #include <QWindow>
 
 #include "clipboardwindow.h"
-
-////////////////////////////////////////////////////////////////////////
+#include "clipboardmodel.h"
 
 class ClipboardWindowPrivate
 {
 public:
-    clipboardmodel::ClipboardModel m_clipboardModel;
+    // variables
+    ClipboardModel m_clipboardModel;
 };
-
 
 ClipboardWindow::ClipboardWindow(QWidget *parent)
     : BaseWidget(parent)

@@ -1,65 +1,61 @@
 
 #include "clipboardmodel.h"
 
-namespace clipboardmodel
+ClipboardModel::ClipboardModel(QObject* parent /* = 0 */)
+    : QAbstractListModel(parent)
 {
-    ClipboardModel::ClipboardModel(QObject* parent /* = 0 */)
-        : QAbstractListModel(parent)
+}
+
+int ClipboardModel::rowCount(const QModelIndex& parentIndex /* = QModelIndex() */) const
+{
+    Q_UNUSED(parentIndex);
+
+    return m_clipboardData.count();
+}
+
+QVariant ClipboardModel::data(const QModelIndex& index, int role) const
+{
+    if (!index.isValid())
     {
+        return QVariant();
     }
 
-    int ClipboardModel::rowCount(const QModelIndex& parentIndex /* = QModelIndex() */) const
+    ClipboardElement element = m_clipboardData.at(index.row());
+
+    switch (role)
     {
-        Q_UNUSED(parentIndex);
-
-        return m_clipboardData.count();
-    }
-
-    QVariant ClipboardModel::data(const QModelIndex& index, int role) const
-    {
-        if (!index.isValid())
+    case Qt::DisplayRole:
+        switch (element.type())
         {
-            return QVariant();
-        }
-
-        ClipboardElement element = m_clipboardData.at(index.row());
-
-        switch (role)
-        {
-        case Qt::DisplayRole:
-            switch (element.type())
-            {
-            case QVariant::Image:
-                element = QLatin1String("#Image#");
-                break;
-
-            default:
-                // nothing
-                break;
-            }
-
-            return element;
+        case QVariant::Image:
+            element = QLatin1String("#Image#");
+            break;
 
         default:
             // nothing
             break;
         }
 
-        return QVariant();
+        return element;
+
+    default:
+        // nothing
+        break;
     }
 
-    void ClipboardModel::addClipboardData(const ClipboardElement& element)
-    {
-        beginInsertRows(QModelIndex(), m_clipboardData.count(), m_clipboardData.count());
-        m_clipboardData.push_back(element);
-        endInsertRows();
-    }
+    return QVariant();
+}
 
-    void ClipboardModel::clearClipboardData()
-    {
-        beginResetModel();
-        m_clipboardData.clear();
-        endResetModel();
-    }
+void ClipboardModel::addClipboardData(const ClipboardElement& element)
+{
+    beginInsertRows(QModelIndex(), m_clipboardData.count(), m_clipboardData.count());
+    m_clipboardData.push_back(element);
+    endInsertRows();
+}
 
-} // clipboardmodel
+void ClipboardModel::clearClipboardData()
+{
+    beginResetModel();
+    m_clipboardData.clear();
+    endResetModel();
+}

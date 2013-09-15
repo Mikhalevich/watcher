@@ -6,7 +6,6 @@
 #include <QScopedPointer>
 
 #include "basewidget.h"
-#include "clipboardmodel.h"
 
 class ClipboardWindowPrivate;
 
