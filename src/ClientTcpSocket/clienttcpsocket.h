@@ -3,6 +3,7 @@
 
 #include <QTcpSocket>
 #include <QDateTime>
+#include <QScopedPointer>
 
 #include "global.h"
 #include "objectfactory.h"
@@ -22,6 +23,8 @@ namespace clientsocket
         class AbstractQuerry;
     }
 
+    class ClientTcpSocketPrivate;
+
     class ClientTcpSocket : public QTcpSocket, public IClientSocket
     {
         Q_OBJECT
@@ -29,16 +32,10 @@ namespace clientsocket
     public:
         ClientTcpSocket(QObject *parent = 0);
         ClientTcpSocket(int number, QObject *parent = 0);
+        virtual ~ClientTcpSocket();
 
-        void setNumber(int number)
-        {
-            socketNumber_ = number;
-        }
-
-        int number() const
-        {
-            return socketNumber_;
-        }
+        void setNumber(int number);
+        int number() const;
 
         // common
         virtual bool isConnected();
@@ -80,20 +77,7 @@ namespace clientsocket
         void checkAutorization(QTcpSocket *socket);
 
     private:
-        void init();
-        void fillFactory();
-
-        ObjectFactory<Operation, networkquery::AbstractQuerry> querryFactory_;
-
-        int socketNumber_;
-
-        // outgoing
-        global::types::operation_t operation_;
-        global::types::operation_size_t size_;
-
-        // incoming
-        global::types::operation_t serverOperation_;
-        global::types::operation_size_t serverSize_;
+        QScopedPointer<ClientTcpSocketPrivate> d_ptr;
     };
 } // clientsocket
 

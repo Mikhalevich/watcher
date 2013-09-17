@@ -14,48 +14,86 @@
 
 namespace clientsocket
 {
+    class ClientTcpSocketPrivate
+    {
+    public:
+        ClientTcpSocketPrivate(const int number = 0);
+
+        void init();
+        void fillFactory();
+
+        ObjectFactory<Operation, networkquery::AbstractQuerry> m_querryFactory;
+
+        int m_socketNumber;
+
+        // outgoing
+        global::types::operation_t m_operation;
+        global::types::operation_size_t m_size;
+
+        // incoming
+        global::types::operation_t m_serverOperation;
+        global::types::operation_size_t m_serverSize;
+    };
+
+    ClientTcpSocketPrivate::ClientTcpSocketPrivate(const int number /* = 0 */)
+        : m_socketNumber(0)
+        , m_operation(NOOPERATION)
+        , m_serverOperation(NOOPERATION)
+        , m_serverSize(0)
+    {
+        fillFactory();
+    }
+
+    void ClientTcpSocketPrivate::fillFactory()
+    {
+        //m_querryFactory.add<>(AUTORIZATION);
+        m_querryFactory.add<networkquery::PictureQuerry>(GETPICTURE);
+        m_querryFactory.add<networkquery::GetMailPropertiesQuerry>(GETMAILPROPERTIES);
+        m_querryFactory.add<networkquery::ExecutionReportQuerry>(EXECUTIONREPORT);
+        m_querryFactory.add<networkquery::GetPicturePropertiesQuerry>(GETPICTURETIMER);
+        m_querryFactory.add<networkquery::GetSettingsQuery>(GETSETTINGS);
+        m_querryFactory.add<networkquery::ClipboardQuery>(GETCLIPBOARD);
+    }
+
     ClientTcpSocket::ClientTcpSocket(QObject *parent)
         : QTcpSocket(parent)
-        , socketNumber_(0)
-        , operation_(NOOPERATION)
-        , serverOperation_(NOOPERATION)
-        , serverSize_(0)
-    {
-        init();
-    }
-
-    ClientTcpSocket::ClientTcpSocket(int number, QObject *parent)
-        : QTcpSocket(parent)
-        , socketNumber_(number)
-        , operation_(NOOPERATION)
-        , serverOperation_(NOOPERATION)
-        , serverSize_(0)
-    {
-        init();
-    }
-
-    void ClientTcpSocket::init()
+        , d_ptr(new ClientTcpSocketPrivate())
     {
         //connect(&tcpSocket_, SIGNAL(connected()), this, SLOT(sendMessages()));
         //connect(&tcpSocket_, SIGNAL(disconnected()), this, SLOT(disconnect()));
         //connect(&tcpSocket_, SIGNAL(error(QAbstractSocket::SocketError)),
-          //      this, SLOT(error(QAbstractSocket::SocketError)));
+        //      this, SLOT(error(QAbstractSocket::SocketError)));
         connect(this, SIGNAL(readyRead()), this, SLOT(readData()));
         //connect(&tcpSocket_, SIGNAL(stateChanged(QAbstractSocket::SocketState)),
-          //      this, SLOT(socketStateChanged(QAbstractSocket::SocketState)));
-
-        fillFactory();
+        //      this, SLOT(socketStateChanged(QAbstractSocket::SocketState)));
     }
 
-    void ClientTcpSocket::fillFactory()
+    ClientTcpSocket::ClientTcpSocket(int number, QObject *parent)
+        : QTcpSocket(parent)
+        , d_ptr(new ClientTcpSocketPrivate(number))
     {
-        //querryFactory_.add<>(AUTORIZATION);
-        querryFactory_.add<networkquery::PictureQuerry>(GETPICTURE);
-        querryFactory_.add<networkquery::GetMailPropertiesQuerry>(GETMAILPROPERTIES);
-        querryFactory_.add<networkquery::ExecutionReportQuerry>(EXECUTIONREPORT);
-        querryFactory_.add<networkquery::GetPicturePropertiesQuerry>(GETPICTURETIMER);
-        querryFactory_.add<networkquery::GetSettingsQuery>(GETSETTINGS);
-        querryFactory_.add<networkquery::ClipboardQuery>(GETCLIPBOARD);
+        //connect(&tcpSocket_, SIGNAL(connected()), this, SLOT(sendMessages()));
+        //connect(&tcpSocket_, SIGNAL(disconnected()), this, SLOT(disconnect()));
+        //connect(&tcpSocket_, SIGNAL(error(QAbstractSocket::SocketError)),
+        //      this, SLOT(error(QAbstractSocket::SocketError)));
+        connect(this, SIGNAL(readyRead()), this, SLOT(readData()));
+        //connect(&tcpSocket_, SIGNAL(stateChanged(QAbstractSocket::SocketState)),
+        //      this, SLOT(socketStateChanged(QAbstractSocket::SocketState)));
+    }
+
+    ClientTcpSocket::~ClientTcpSocket()
+    {
+        // empty
+    }
+
+    void ClientTcpSocket::setNumber(int number)
+    {
+        d_ptr->m_socketNumber = number;
+    }
+
+    int ClientTcpSocket::number() const
+    {
+        return d_ptr->m_socketNumber;
     }
 
     bool ClientTcpSocket::isConnected()
@@ -65,11 +103,11 @@ namespace clientsocket
 
     void ClientTcpSocket::getPicture()
     {
-        operation_ = GETPICTURE;
-        size_ = 0;
+        d_ptr->m_operation = GETPICTURE;
+        d_ptr->m_size = 0;
 
         QDataStream out(this);
-        out << operation_ << size_;
+        out << d_ptr->m_operation << d_ptr->m_size;
     }
 
     void ClientTcpSocket::getPictures(const QDateTime begin, const QDateTime end)
@@ -80,54 +118,54 @@ namespace clientsocket
         {
             if (!begin.isValid())
             {
-                operation_ = GETALLPICTURES;
-                size_ = 0;
-                out << operation_ << size_;
+                d_ptr->m_operation = GETALLPICTURES;
+                d_ptr->m_size = 0;
+                out << d_ptr->m_operation << d_ptr->m_size;
             }
             else
             {
-                operation_ = GETCURRENTDATEPICTURES;
+                d_ptr->m_operation = GETCURRENTDATEPICTURES;
 
                 // calculating size of command data
-                size_ = sizeof(begin);
+                d_ptr->m_size = sizeof(begin);
 
-                out << operation_ << size_ << begin;
+                out << d_ptr->m_operation << d_ptr->m_size << begin;
             }
         }
         else
         {
-            operation_ = GETPERIODPICTURES;
+            d_ptr->m_operation = GETPERIODPICTURES;
 
             // calculating size of command data
-            size_ = sizeof(begin) + sizeof(end);
+            d_ptr->m_size = sizeof(begin) + sizeof(end);
 
-            out << operation_ << size_ << begin << end;
+            out << d_ptr->m_operation << d_ptr->m_size << begin << end;
         }
 
     }
 
     void ClientTcpSocket::pictureTimer(int value)
     {
-        operation_ = PICTURETIMER;
+        d_ptr->m_operation = PICTURETIMER;
         qint16 timerInterval = (qint16)value;
-        size_ = sizeof(timerInterval);
+        d_ptr->m_size = sizeof(timerInterval);
 
         QDataStream out(this);
-        out << operation_ << size_ << timerInterval;
+        out << d_ptr->m_operation << d_ptr->m_size << timerInterval;
     }
 
     void ClientTcpSocket::getPictureTimer()
     {
-        operation_ = GETPICTURETIMER;
-        size_ = 0;
+        d_ptr->m_operation = GETPICTURETIMER;
+        d_ptr->m_size = 0;
 
         QDataStream out(this);
-        out << operation_ << size_;
+        out << d_ptr->m_operation << d_ptr->m_size;
     }
 
     void ClientTcpSocket::login(const QString& user, const QByteArray& password)
     {
-        operation_ = AUTORIZATION;
+        d_ptr->m_operation = AUTORIZATION;
 
         QByteArray bytes;
         QBuffer buf(&bytes);
@@ -137,10 +175,10 @@ namespace clientsocket
         outBuf << user.toUtf8() << password;
         buf.close();
 
-        size_ = bytes.size();
+        d_ptr->m_size = bytes.size();
 
         QDataStream out(this);
-        out << operation_ << size_ << user.toUtf8() << password;
+        out << d_ptr->m_operation << d_ptr->m_size << user.toUtf8() << password;
 
     }
 
@@ -149,7 +187,7 @@ namespace clientsocket
                                          const QString &sendFrom, const QStringList &sendTo,
                                          int interval)
     {
-        operation_ = MAILPROPERTIES;
+        d_ptr->m_operation = MAILPROPERTIES;
 
         QByteArray recepients = sendTo.join(QLatin1String(",")).toUtf8();
 
@@ -161,11 +199,11 @@ namespace clientsocket
                 << sendFrom.toUtf8() << recepients
                 << (qint16)interval;
 
-        size_ = bytes.size();
+        d_ptr->m_size = bytes.size();
 
         // send to server
         QDataStream out(this);
-        out << operation_ << size_
+        out << d_ptr->m_operation << d_ptr->m_size
             << server.toUtf8() << (qint32)port
             << user.toUtf8() << password.toUtf8()
             << sendFrom.toUtf8() << recepients
@@ -174,70 +212,70 @@ namespace clientsocket
 
     void ClientTcpSocket::getMailProperties()
     {
-        operation_ = GETMAILPROPERTIES;
-        size_ = 0;
+        d_ptr->m_operation = GETMAILPROPERTIES;
+        d_ptr->m_size = 0;
 
         QDataStream out(this);
-        out << operation_ << size_;
+        out << d_ptr->m_operation << d_ptr->m_size;
     }
 
     void ClientTcpSocket::getSettings()
     {
-        operation_ = GETSETTINGS;
-        size_ = 0;
+        d_ptr->m_operation = GETSETTINGS;
+        d_ptr->m_size = 0;
 
         QDataStream out(this);
-        out << operation_ << size_;
+        out << d_ptr->m_operation << d_ptr->m_size;
     }
 
     void ClientTcpSocket::setSettings(qint32 port, qint8 startupMode, qint8 trayIcon)
     {
-        operation_ = SETSETTINGS;
+        d_ptr->m_operation = SETSETTINGS;
 
         // determinate size
         QByteArray bytes;
         QDataStream sizeBuf(&bytes, QIODevice::WriteOnly);
         sizeBuf << (qint32)port << qint8(startupMode) << qint8(trayIcon);
 
-        size_ = bytes.size();
+        d_ptr->m_size = bytes.size();
 
         // send to server
         QDataStream out(this);
-        out << operation_ << size_
+        out << d_ptr->m_operation << d_ptr->m_size
             << (qint32)port << qint8(startupMode) << qint8(trayIcon);
     }
 
     void ClientTcpSocket::getClipboard()
     {
-        operation_ = GETCLIPBOARD;
-        size_ = 0;
+        d_ptr->m_operation = GETCLIPBOARD;
+        d_ptr->m_size = 0;
 
         QDataStream out(this);
-        out << operation_ << size_;
+        out << d_ptr->m_operation << d_ptr->m_size;
     }
 
     void ClientTcpSocket::setClipboard(const QVariant& clipboardData)
     {
-        operation_ = SETCLIPBOARD;
+        d_ptr->m_operation = SETCLIPBOARD;
 
         // determinate size
         QByteArray bytes;
         QDataStream sizeBuf(&bytes, QIODevice::WriteOnly);
         sizeBuf << clipboardData;
 
-        size_ = bytes.size();
+        d_ptr->m_size = bytes.size();
 
         QDataStream out(this);
-        out << operation_ << size_ << clipboardData;
+        out << d_ptr->m_operation << d_ptr->m_size << clipboardData;
     }
 
     void ClientTcpSocket::getLastClipboard()
     {
-        operation_ = GETLASTCLIPBOARD;
-        size_ = 0;
+        d_ptr->m_operation = GETLASTCLIPBOARD;
+        d_ptr->m_size = 0;
 
         QDataStream out(this);
-        out << operation_ << size_;
+        out << d_ptr->m_operation << d_ptr->m_size;
     }
 
     void ClientTcpSocket::readData()
@@ -247,19 +285,19 @@ namespace clientsocket
         {
             QDataStream in(this);
 
-            if (serverOperation_ == NOOPERATION)
+            if (d_ptr->m_serverOperation == NOOPERATION)
             {
-                if (bytesAvailable() < (sizeof(serverOperation_) + sizeof(serverSize_)))
+                if (bytesAvailable() < (sizeof(d_ptr->m_serverOperation) + sizeof(d_ptr->m_serverSize)))
                 {
                     // wait all data
                     return;
                 }
 
                 // read operation and size
-                in >> serverOperation_ >> serverSize_;
+                in >> d_ptr->m_serverOperation >> d_ptr->m_serverSize;
 
                 // end of transmittion
-                if (serverSize_ == 0)
+                if (d_ptr->m_serverSize == 0)
                 {
                     //operation = NOOPERATION;
                     //size = 0;
@@ -267,7 +305,7 @@ namespace clientsocket
                 }
             }
 
-            if (bytesAvailable() < serverSize_)
+            if (bytesAvailable() < d_ptr->m_serverSize)
             {
                 // wait while all data come
                 return;
@@ -275,13 +313,13 @@ namespace clientsocket
 
             QSharedPointer<networkquery::AbstractQuerry> querry;
 
-            if (serverOperation_ == AUTORIZATION)
+            if (d_ptr->m_serverOperation == AUTORIZATION)
             {
                 checkAutorization(this);
             }
             else
             {
-                querry = querryFactory_.create(static_cast<Operation>(serverOperation_));
+                querry = d_ptr->m_querryFactory.create(static_cast<Operation>(d_ptr->m_serverOperation));
             }
 
             //Q_ASSERT(querry);
@@ -292,8 +330,8 @@ namespace clientsocket
                 querry->execute(this);
             }
 
-            serverOperation_ = NOOPERATION;
-            serverSize_ = 0;
+            d_ptr->m_serverOperation = NOOPERATION;
+            d_ptr->m_serverSize = 0;
         }
     }
 
